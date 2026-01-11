@@ -1,5 +1,8 @@
 # CS410 - App for Seniors 👵🏻
 
+### Members: Leon, Josh, Andrew, An
+
+TODO:
 * One-paragraph product description
 * Target user and problem being solved
 * What kinds of users or uses are out of scope for your project (see Ethics in the Studio)
