@@ -1,1 +1,2 @@
-# cs410
+# CS410 - App for Seniors 👵🏻
+
