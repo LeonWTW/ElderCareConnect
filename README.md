@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a web-app designed for family members to monitor their elderly loved ones from anywhere, so long as they have access to a stable internet/cellular connection. The app features daily reminders to take medication, 
+This is a web-app designed for family members to monitor their elderly loved ones from anywhere, so long as they have access to a stable internet/cellular connection. The app features daily reminders to take medication, family monitoring, and games to stimulate the brain.
 
 ## Target user and problem being solved
 
