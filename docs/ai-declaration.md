@@ -1,6 +1,6 @@
 ### Tools: 
 
-ChatGPT, Copilot , Claude, Gemini
+ChatGPT, Copilot, Claude, Gemini
 
 ### Usage Log 
 
