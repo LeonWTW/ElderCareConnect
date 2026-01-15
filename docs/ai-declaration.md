@@ -1,6 +1,6 @@
 ### Tools: 
 
-ChatGPT, Copilot (VSCode integrated), Claude, Gemini
+ChatGPT, Copilot, Claude, Gemini
 
 ### Usage Log 
 
