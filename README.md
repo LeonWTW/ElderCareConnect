@@ -1,5 +1,5 @@
 # CS410 - ElderCare Connect 👵🏻
-
+--------
 ## Description
 
 This is a web-app designed for helping the elderly struggling with memory loss, as well as family members that want to monitor their elderly loved ones from anywhere, so long as they have access to a stable internet/cellular connection. The app features daily reminders to take medication, family monitoring, and games to stimulate the brain. There will be a simple and intuitive to use dashboard that allows the elderly to check in and start tasks, and for monitoring family members to quickly keep track of their status (e.g. task completion). These are only a select few things we aim to implement, and the feature set may be subject to new features if time allows for it during our implementation process.
