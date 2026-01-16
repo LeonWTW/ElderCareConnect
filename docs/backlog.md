@@ -3,12 +3,15 @@ The users of the product will be the elderly with declining cognitive function a
 
 ## Backlog Issues
 #### Frontend
+- Deciding on a stack
 - Pages: landing page to select elder or relative -> branches into two separate pages for each
 - Skeleton code for basic UI interaction
     - Simple for elders (minimal cognitive function required)
     - More defined for relatives
 
 #### Backend
+- Deciding on a stack
+- Getting a basic web server up (local testing)
 - Setting up for user logins
 
 
