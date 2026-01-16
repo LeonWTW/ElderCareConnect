@@ -3,7 +3,7 @@ Mondays @ 6pm (Primarily online, in-person if needed)
 
 ### Team Mentor Meeting 
 - Week 2 - Friday 12pm
-- Week 3 - Tuesday 2pm
+- Week 3 - Wed 2pm
 
 ### Communication
 Discord Server
