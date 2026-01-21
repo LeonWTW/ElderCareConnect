@@ -1,0 +1,23 @@
+Landing Page:
+
+    HTML/CSS:
+    - Formatting for design of the navbar (css)
+    - Helped me implement a container with auto resizing for each section
+    - Helped me wrap images under text for screen resizing
+        - Navbar element resizing as well
+    - 
+
+    JS:
+    -
+
+Login/Sign-up Page:
+
+    HTML/CSS:
+    - Chain-linking class element with id element for styling
+    
+
+    JS:
+
+User Page (Elder):
+
+User Page (Caregiver):
