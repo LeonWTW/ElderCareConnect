@@ -1,0 +1,259 @@
+/* Overall Design */
+html {
+    scroll-behavior: smooth;
+    font-size: 18px;
+}
+
+body {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: black;
+    margin: 0;
+    background-color: rgb(255, 255, 255);
+}
+
+a {
+    text-decoration: none; /* Removes the link underline*/
+}
+
+section {
+    display: block;
+    min-height: 200px;
+    width: 100%;
+}
+
+footer {
+    padding: 0 40px;
+    color: grey;
+    text-align: right;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0px auto;
+    padding: 0px 1.5rem;
+}
+
+/* Navbar Elements */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    position: fixed;
+    z-index: 1000; /* Ensures navbar is topmost layer*/
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    /* margin-top: -17px; */
+    padding: 0px 40px;
+    border-bottom: 1px solid rgb(185, 193, 224);
+}
+
+.nav-logo {
+    /* flex-shrink: 0; */
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: black;
+    white-space: nowrap;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.nav-item {
+    text-decoration: none;
+    font-size: 22px;
+    position: relative;
+    color: grey;
+}
+
+.sign-up {
+    color: white;
+    background: rgb(84, 115, 225);
+    border-radius: 6px;
+    padding: 5px 10px;
+}
+
+/* Hero Section */
+.hero {
+    background-color: rgb(233, 237, 253);
+    text-align: left;
+    padding: 70px 20px;
+}
+
+.hero-elements {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 100px;
+    padding: 180px 0px; 
+}
+
+.hero-desc {
+    flex: 1;
+    min-width: 300px;
+}
+
+.hero-title {
+    font-size: 4.5rem;
+    font-weight: 600;
+}
+
+.hero-sub {
+    font-size: 1.25rem;
+    color: grey;
+    margin-bottom: 40px;
+}
+
+.get-started {
+    color: white;
+    font-size: 20px;
+    font-weight: 650;
+    background: rgb(84, 115, 225);
+    border-radius: 6px;
+    padding: 15px 30px;
+}
+
+.hero-img {
+    flex: 1;
+    min-width: 300px;
+}
+
+.hero-img img {
+    width: 90%;
+}
+
+/* Info Section */
+.info {
+    padding: 80px 20px;
+}
+
+.info-desc {
+    text-align: center;
+    font-size: 3.1rem;
+    font-weight: 400;
+    margin-bottom: 60px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.info-card {
+    padding: 0px 20px;
+    background-color: rgb(254, 255, 255);
+    border: 3px solid grey;
+    border-radius: 8px;
+
+}
+
+.info-card-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.info-card-desc {
+    color: grey;
+}
+
+.info-img {
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+/* Demo Section */
+.demo {
+    padding: 0px 20px;
+    background-color: rgb(233, 237, 253);
+}
+
+.demo-elements {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 100px;
+    padding: 180px 0px; 
+}
+
+.demo-vid {
+    flex: 1;
+    min-width: 300px;
+}
+
+.demo-vid img {
+    width: 90%;
+}
+
+.demo-desc {
+    flex: 1;
+    min-width: 300px;
+}
+
+.demo-title {
+    text-align: right;
+    font-size: 3.1rem;
+    font-weight: 400;
+}
+
+.demo-sub {
+    text-align: right;
+    font-size: 1.25rem;
+    color: grey;
+}
+
+/* Summary Section */
+.summary {
+    padding: 80px 0px;
+}
+
+.summary-elements {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 100px 100px; 
+}
+
+.summary-desc {
+    font-size: 3.5rem;
+    font-weight: 400;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.summary-card {
+    padding: 0px 20px;
+    border: 2px solid grey;
+    border-radius: 8px;
+}
+
+.summary-card-desc {
+    font-weight: 300;
+    text-align: center;
+}
+
+/* Final Section*/
+.final {
+    padding: 100px 20px;
+    width: 100%;
+    background-color: rgb(233, 237, 253);
+}
+
+.final-elements {
+    text-align: center;
+}
+
+.final-desc {
+    font-size: 3.5rem;
+    font-weight: 400;
+    margin-bottom: 75px;
+}
