@@ -4,18 +4,20 @@ const messageDisplay = document.getElementById('message');
 submitBtn.addEventListener('click', async () => {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const password2 = document.getElementById('password2').value;
 
     
     //Validation
-    if ((username == "") || (password == "") || (password2 == "")) {
+    if ((username == "") || (password == "")) {
         messageDisplay.innerText = "At least one entry was empty";
         return;
     }
+    
+    //Add another check for username username exists
 
-    if (password !== password2) {
-        messageDisplay.innerText = "Passwords do not match";
-        return;
-    }
+    //Add another check for username/password pair is valid
+
+
+    //Redirct to account homepage
+    window.location.href = "caregiver_home.html";
 
 });
