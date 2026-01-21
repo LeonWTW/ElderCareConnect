@@ -8,7 +8,15 @@ Landing Page:
     - 
 
     JS:
+    -
 
+Login/Sign-up Page:
+
+    HTML/CSS:
+    - Chain-linking class element with id element for styling
+    
+
+    JS:
 
 User Page (Elder):
 
