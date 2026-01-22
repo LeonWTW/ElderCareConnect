@@ -4,3 +4,5 @@
 - Using design tools such as Figma to avoid redundancies and tediousness of designing and implementing the UI
 
 ### 1/21/25 Meeting @ 2pm
+- Talk through team and determine whether we want to use JS, TS, React, etc.
+- Setting up routes for frontend/backend
