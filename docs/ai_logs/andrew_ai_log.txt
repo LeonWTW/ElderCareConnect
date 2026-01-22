@@ -1,0 +1,5 @@
+Chatgbt 
+- assissted in changing from a python server to javascript
+- refferenecs for the server.js and package.json
+- trouble shooting when I couldn't figure out to to see it the frount and backend were talking
+  to eachother
