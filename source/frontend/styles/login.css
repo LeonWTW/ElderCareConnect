@@ -44,7 +44,7 @@ footer {
 }
 
 /* Sign Up Box */
-.sign-up-box {
+.log-in-box {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -61,22 +61,18 @@ footer {
     min-width: 40vh;
 }
 
-.username-make {
+.label {
+    text-align: center;
+    font-weight: 400;
+    text-decoration: underline 2px lightgrey;
+}
+
+.username {
     display: grid;
     gap: 10px;
 }
 
-.email-make {
-    display: grid;
-    gap: 10px;
-}
-
-.password-make {
-    display: grid;
-    gap: 10px;
-}
-
-.password-confirm {
+.password {
     display: grid;
     gap: 10px;
 }
