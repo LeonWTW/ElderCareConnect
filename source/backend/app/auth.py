@@ -1,3 +1,7 @@
+"""
+ElderCare Connect - Authentication Utilities
+JWT token generation and password hashing
+"""
 import os
 import time
 import jwt
@@ -15,21 +19,36 @@ JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret-change-me")
 JWT_ALG = "HS256"
 JWT_EXPIRES_SECONDS = int(os.getenv("JWT_EXPIRES_SECONDS", "86400"))  # 1 day
 
+
 def hash_password(password: str) -> str:
+    """Hash a plain text password"""
     return pwd_context.hash(password)
 
+
 def verify_password(password: str, password_hash: str) -> bool:
+    """Verify a password against its hash"""
     return pwd_context.verify(password, password_hash)
 
+
 def create_access_token(user_id: int) -> str:
+    """Create a JWT access token for a user"""
     now = int(time.time())
-    payload = {"sub": str(user_id), "iat": now, "exp": now + JWT_EXPIRES_SECONDS}
+    payload = {
+        "sub": str(user_id),
+        "iat": now,
+        "exp": now + JWT_EXPIRES_SECONDS
+    }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALG)
+
 
 def get_current_user(
     creds: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db),
 ) -> models.User:
+    """
+    Dependency that extracts and validates JWT token,
+    returns the authenticated user.
+    """
     token = creds.credentials
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALG])

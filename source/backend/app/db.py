@@ -1,16 +1,25 @@
+"""
+ElderCare Connect - Database Configuration
+"""
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db:5432/eldercare")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", 
+    "postgresql://postgres:postgres@db:5432/eldercare"
+)
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 class Base(DeclarativeBase):
     pass
 
+
 def get_db():
+    """Dependency that provides a database session"""
     db = SessionLocal()
     try:
         yield db

@@ -1,7 +1,12 @@
+"""
+ElderCare Connect - Health Check Route
+"""
 from fastapi import APIRouter
 
-router = APIRouter()
+router = APIRouter(tags=["health"])
+
 
 @router.get("/health")
 def health():
-    return {"ok": True}
+    """Health check endpoint"""
+    return {"ok": True, "service": "eldercare-api"}
