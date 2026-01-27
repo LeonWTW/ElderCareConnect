@@ -6,13 +6,20 @@ services:
     environment:
       - PORT=3001
     volumes:
-      - ./source/backend:/app
-      - /app/node_modules
-    command: npm run dev
+      - eldercare_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   frontend:
     image: nginx:alpine
     ports:
-      - "8080:80"
-    volumes:
-      - ./source/frontend:/usr/share/nginx/html:ro
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  eldercare_pg:
