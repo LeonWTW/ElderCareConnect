@@ -4,14 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ElderCare Connect - Login</title>
-    <link rel="stylesheet" href="styles/login.css">
-    <script src="app/login.js" defer></script>
+    <link rel="stylesheet" href="styles/elder_login.css">
+    <script src="scripts/elder_login.js" defer></script>
 </head>
 
 
 <body> 
 
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar">
+            <a href="home.html" class="nav-logo"> 
+                Back to home
+            </a>
+        </nav>
+    </header>
 
+    <div class="log-in-box">
+        <div id="login">
+            <h1 class="label">ElderCare Connect</h1>
+            <div class="username">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username">
+            </div>
+
+            <div class="password">
+                <label for="password">Password</label>
+                <input type="text" id="password" name="password">
+            </div>
+
+            <button id="submitBtn">Log In</button>
+
+            <p class="account">
+                Need to create an account?
+                <span><a href="sign_up.html">Sign Up</a></span>.
+            </p>
+            
+            <p id="message"></p>
+        </div>
+    </div>
 </body>
-
-</html>
