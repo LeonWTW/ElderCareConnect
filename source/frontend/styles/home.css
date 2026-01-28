@@ -78,7 +78,7 @@ footer {
 
 /* Hero Section */
 .hero {
-    background-color: rgb(233, 237, 253);
+    background-color: rgb(203, 212, 249);
     text-align: left;
     padding: 70px 20px;
 }
@@ -119,10 +119,14 @@ footer {
 .hero-img {
     flex: 1;
     min-width: 300px;
+    border: 2px solid black;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0px black;
 }
 
 .hero-img img {
-    width: 90%;
+    border-radius: 10px;
+    width: 100%;
 }
 
 /* Info Section */
@@ -168,7 +172,7 @@ footer {
 /* Demo Section */
 .demo {
     padding: 0px 20px;
-    background-color: rgb(233, 237, 253);
+    background-color: rgb(203, 212, 249);
 }
 
 .demo-elements {
@@ -244,7 +248,7 @@ footer {
 .final {
     padding: 100px 20px;
     width: 100%;
-    background-color: rgb(233, 237, 253);
+    background-color: rgb(203, 212, 249);
 }
 
 .final-elements {

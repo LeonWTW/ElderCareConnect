@@ -79,9 +79,11 @@ footer {
 .button:hover#elderBtn {
     background-color: rgb(180, 145, 233);
     cursor: pointer;
+    transition: all 0.3s;
 }
 
 .button:hover#caregiverBtn {
     background-color: rgb(188, 188, 188);
     cursor: pointer;
+    transition: all 0.3s;
 }
