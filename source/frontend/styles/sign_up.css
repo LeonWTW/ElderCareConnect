@@ -33,6 +33,7 @@ footer {
     width: 100%;
     /* margin-top: -17px; */
     padding: 10px 40px;
+    border-bottom: 1px solid rgb(185, 193, 224);
 }
 
 .nav-logo {
@@ -89,6 +90,7 @@ label {
 input {
     font-size: 16px;
     font-weight: 100;
+    color: rgb(36, 124, 255);
 }
 
 #submitBtn {
