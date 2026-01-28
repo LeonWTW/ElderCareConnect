@@ -4,11 +4,11 @@ const gamesBtn = document.getElementById('gamesBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 
 tasksBtn.addEventListener('click', async () => {
-
+    window.location.href = "elder_tasks.html";
 });
 
 checkinBtn.addEventListener('click', async () => {
-
+    
 });
 
 gamesBtn.addEventListener('click', async () => {
