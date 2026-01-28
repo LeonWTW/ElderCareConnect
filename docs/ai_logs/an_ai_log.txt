@@ -14,10 +14,23 @@ Login/Sign-up Page:
 
     HTML/CSS:
     - Chain-linking class element with id element for styling
-    
 
     JS:
+    -
 
 User Page (Elder):
 
+    HTML/CSS:
+    - Finding and adding icons to buttons
+    - Logout button resize and centering
+
+    JS:
+    -
+
 User Page (Caregiver):
+
+    HTML/CSS:
+    -
+
+    JS:
+    -
