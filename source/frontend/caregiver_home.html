@@ -11,18 +11,35 @@
 
 <body>
 
+    <header>
+        <nav class="navbar">
+           <button class="logout" id="logoutBtn">Log Out</button>
+        </nav>
+    </header>
+
     <main>
-        <div class="dashboard">
+        <div id="content" class="content">
             <h2 class="label">Caregiver Dashboard</h2>
             <p class="desc">Welcome! Manage tasks and monitor here!</p>
-
-            <div class="dashboard-grid">
-                <button class="button" id="tasksBtn"><i class="fas fa-list-check"></i> Manage Tasks</button>
-                <button class="button" id="monitorBtn"><i class="fa-solid fa-computer"></i> Notifications</button>
-            </div>
-
-            <button class="logout" id="logoutBtn">Log Out</button>
         </div>
+
+        <div id="tasks" class="tasks hidden">
+            <h2>Test</h2>
+            
+        </div>
+
+        <div id="notifs" class="notifs hidden">
+            <h2>Test</h2>
+        </div>
+
     </main>
+
+    <footer class="footer-nav">
+        
+        <nav class="footer-navbar">
+            <button class="footer-button" id="tasksBtn"><i class="fas fa-list-check"></i> Manage Tasks</button>
+            <button class="footer-button" id="monitorBtn"><i class="fa-solid fa-computer"></i> Notifications</button>
+        </nav>
+    </footer>
 
 </body>
