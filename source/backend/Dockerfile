@@ -11,5 +11,4 @@ COPY . .
 
 EXPOSE 3001
 
-# TODO: Review
-CMD ["npm", "start", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["npm", "start"]
