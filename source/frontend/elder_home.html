@@ -4,23 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ElderCare Connect - Home</title>
-    <link rel="stylesheet" href="styles/home.css">
-    <script src="scripts/app.js" defer></script>
+    <link rel="stylesheet" href="styles/elder_home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="scripts/elder_home.js" defer></script>
 </head>
 
 <body>
-    <div class="buttons">
-        <button class="icon-btn">
-            <img src="images/button_ph.jpeg" alt="To Do List" class="btn-icon">
-        </button>
 
-        <button class="icon-btn">
-            <img src="images/button_ph.jpeg" alt="extra a" class="btn-icon">
-        </button>
+    <main>
+        <div class="dashboard">
+            <h2 class="label">Elder Dashboard</h2>
+            <p class="desc">Welcome! Remember to always check in and view tasks!</p>
 
-        <button class="icon-btn">
-            <img src="images/button_ph.jpeg" alt="extra b" class="btn-icon">
-        </button>
+            <div class="dashboard-grid">
+                <button class="button" id="tasksBtn"><i class="fas fa-list-check"></i> View Tasks</button>
+                <button class="button" id="checkinBtn"><i class="fas fa-check-circle"></i> Check In</button>
+                <button class="button" id="gamesBtn"><i class="fas fa-x"></i> Play Games</button>
+            </div>
 
-    </div>
+            <button class="logout" id="logoutBtn">Log Out</button>
+        </div>
+    </main>
+
 </body>
