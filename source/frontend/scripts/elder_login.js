@@ -12,12 +12,37 @@ submitBtn.addEventListener('click', async () => {
         return;
     }
     
-    //Add another check for name, caregiver name exists
+    try {
+        const response = await fetch('http://localhost:3001/api/elders/link', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                elderName: username,
+                caregiverName: caregiver_name
+            })
+        });
 
-    //Add another check for username/password pair is valid
+        if (!response.ok) {
+            const data = await response.json();
+            messageDisplay.innerText = data.error || "Unable to link elder to caregiver";
+            return;
+        }
 
+        const data = await response.json();
+        if (data.elder && data.caregiver) {
+            localStorage.setItem('elderId', data.elder.id);
+            localStorage.setItem('elderName', data.elder.username);
+            localStorage.setItem('caregiverId', data.caregiver.id);
+            localStorage.setItem('caregiverName', data.caregiver.username);
+        }
 
-    //Redirct to account homepage
-    window.location.href = "elder_home.html";
+        window.location.href = "elder_home.html";
+    } catch (error) {
+        console.error('Network error:', error);
+        messageDisplay.innerText = "Unable to connect to server";
+        return;
+    }
 
 });

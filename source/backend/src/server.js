@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import pool, { initDb } from "./db.js";
 
 const app = express();
 
@@ -11,6 +12,9 @@ app.use(cors({
 
 app.use(express.json());
 
+// Initialize database tables
+await initDb();
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({ ok: true, service: "backend", time: new Date().toISOString() });
@@ -21,9 +25,6 @@ app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from Node backend!" });
 });
 
-// TEMP in-memory users (replace with DB later)
-const users = ['tester'];
-
 /* REGISTER */
 app.post("/api/auth/register", (req, res) => {
   const { username, email, password, role } = req.body;
@@ -32,46 +33,159 @@ app.post("/api/auth/register", (req, res) => {
     return res.status(400).json({ error: "Missing fields" });
   }
 
-  if (users.find(u => u.username === username)) {
-    return res.status(409).json({ error: "Username already exists" });
-  }
-
-  const user = {
-    id: users.length + 1,
-    username,
-    email,
-    password, // ⚠ plain text for now (OK for class demo)
-    role
-  };
-
-  users.push(user);
-
-  res.status(201).json({
-    message: "User registered",
-    user: { id: user.id, username, role }
-  });
+  pool.query(
+    "INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, username, role",
+    [username, email, password, role]
+  )
+    .then(result => {
+      const user = result.rows[0];
+      res.status(201).json({
+        message: "User registered",
+        user
+      });
+    })
+    .catch(err => {
+      if (err.code === "23505") {
+        return res.status(409).json({ error: "Username or email already exists" });
+      }
+      res.status(500).json({ error: "Server error" });
+    });
 });
 
 /* LOGIN */
 app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
 
-  const user = users.find(
-    u => u.username === username && u.password === password
-  );
+  pool.query(
+    "SELECT id, username, role FROM users WHERE username = $1 AND password = $2",
+    [username, password]
+  )
+    .then(result => {
+      const user = result.rows[0];
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
 
-  if (!user) {
-    return res.status(401).json({ error: "Invalid credentials" });
+      res.json({
+        message: "Login successful",
+        user
+      });
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Server error" });
+    });
+});
+
+/* LINK ELDER TO CAREGIVER */
+app.post("/api/elders/link", (req, res) => {
+  const { elderName, caregiverName } = req.body;
+
+  if (!elderName || !caregiverName) {
+    return res.status(400).json({ error: "Missing elder or caregiver name" });
   }
 
-  res.json({
-    message: "Login successful",
-    user: {
-      id: user.id,
-      username: user.username,
-      role: user.role
-    }
-  });
+  pool.query(
+    "SELECT id, username FROM users WHERE username = $1 AND role = 'caregiver'",
+    [caregiverName]
+  )
+    .then(result => {
+      const caregiver = result.rows[0];
+      if (!caregiver) {
+        return res.status(404).json({ error: "Caregiver not found. Have them sign up first." });
+      }
+
+      return pool.query(
+        "SELECT id, username FROM users WHERE username = $1 AND role = 'elder'",
+        [elderName]
+      ).then(olderResult => {
+        const elder = olderResult.rows[0];
+        if (elder) {
+          return { caregiver, elder };
+        }
+
+        const safeEmail = `${elderName.toLowerCase().replace(/\s+/g, ".")}@elder.local`;
+        const tempPassword = "elder";
+
+        return pool.query(
+          "INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, 'elder') RETURNING id, username",
+          [elderName, safeEmail, tempPassword]
+        ).then(insertResult => ({
+          caregiver,
+          elder: insertResult.rows[0]
+        }));
+      });
+    })
+    .then(({ caregiver, elder }) => {
+      return pool.query(
+        "INSERT INTO care_links (elder_id, caregiver_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+        [elder.id, caregiver.id]
+      ).then(() => {
+        res.json({
+          message: "Linked",
+          elder,
+          caregiver
+        });
+      });
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Server error" });
+    });
+});
+
+/* CREATE CHECK-IN */
+app.post("/api/checkins", (req, res) => {
+  const { elderId } = req.body;
+
+  if (!elderId) {
+    return res.status(400).json({ error: "Missing elderId" });
+  }
+
+  pool.query(
+    "SELECT caregiver_id FROM care_links WHERE elder_id = $1",
+    [elderId]
+  )
+    .then(result => {
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: "No caregiver linked to this elder" });
+      }
+
+      const inserts = result.rows.map(row => {
+        return pool.query(
+          "INSERT INTO checkins (elder_id, caregiver_id) VALUES ($1, $2)",
+          [elderId, row.caregiver_id]
+        );
+      });
+
+      return Promise.all(inserts).then(() => {
+        res.json({ message: "Check-in recorded", count: inserts.length });
+      });
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Server error" });
+    });
+});
+
+/* CAREGIVER NOTIFICATIONS */
+app.get("/api/caregivers/:caregiverId/notifications", (req, res) => {
+  const caregiverId = req.params.caregiverId;
+
+  pool.query(
+    `
+      SELECT c.id, c.created_at, u.username AS elder_name
+      FROM checkins c
+      JOIN users u ON u.id = c.elder_id
+      WHERE c.caregiver_id = $1
+      ORDER BY c.created_at DESC
+      LIMIT 20
+    `,
+    [caregiverId]
+  )
+    .then(result => {
+      res.json(result.rows);
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Server error" });
+    });
 });
 
 const PORT = process.env.PORT || 3001;
