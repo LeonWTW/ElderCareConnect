@@ -34,6 +34,7 @@ User Page (Caregiver):
     - Originally same button layout as elder -> changed code to refactor buttons to the bottom of the page
     - Helped me hide and show items upon button click
     - Implemented the todo-list box
+    - Implemented notification box
 
     JS:
     - Helped me hide and show items upon button click

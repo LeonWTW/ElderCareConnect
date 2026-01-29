@@ -61,6 +61,67 @@ a {
     padding: 50px;
 }
 
+/* Task management */
+.tasks {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 50px;
+}
+
+.tasks-label {
+    text-align: center;
+    font-size: 50px;
+    font-weight: 300;
+}
+
+/* Notifications */
+.notifs {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 50px;
+}
+
+.notifs-label {
+    text-align: center;
+    font-size: 50px;
+    font-weight: 300;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 600px;
+    margin: 0 auto;
+}
+
+.notification-box {
+    background-color: white;
+    border-left: 5px solid rgb(161, 7, 7);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notification-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.notification-box p {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 16px;
+}
+
+.notification-box .time {
+    font-size: 14px;
+    color: #999;
+}
+
 .hidden {
     display: none;
 }
@@ -100,8 +161,10 @@ a {
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s;    
+    pointer-events: auto;
 }
+
 .footer-button i {
     font-size: 20px;
 }
