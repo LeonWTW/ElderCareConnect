@@ -22,7 +22,7 @@ app.get("/api/hello", (req, res) => {
 });
 
 // TEMP in-memory users (replace with DB later)
-const users = [];
+const users = ['tester'];
 
 /* REGISTER */
 app.post("/api/auth/register", (req, res) => {
