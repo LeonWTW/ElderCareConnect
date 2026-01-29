@@ -18,6 +18,7 @@ submitBtn.addEventListener('click', async () => {
 
 
     //Redirct to account homepage
+    localStorage.setItem('username', username);
     window.location.href = "caregiver_home.html";
 
 });
