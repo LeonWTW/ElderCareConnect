@@ -19,13 +19,36 @@
 
     <main>
         <div id="content" class="content">
-            <h2 class="label">Caregiver Dashboard</h2>
+            <h2 id="dashboardLabel" class="label"></h2> <!-- Name on dashboard -->
             <p class="desc">Welcome! Manage tasks and monitor here!</p>
         </div>
 
         <div id="tasks" class="tasks hidden">
             <h2 class="tasks-label">Task Management</h2>
-
+            
+            <div class="tasks-container">
+                <!-- Add Tasks Box -->
+                <div class="task-box">
+                    <h3>Add New Task</h3>
+                    <form id="addTaskForm" class="task-form">
+                        <input type="text" id="taskInput" placeholder="Enter task description" required>
+                        <textarea id="taskDetails" placeholder="Task details (optional)" rows="4"></textarea>
+                        <select id="elderSelect" required>
+                            <option value="">Select Elder</option>
+                            <option value="">Tester</option>
+                        </select>
+                        <button type="submit" class="submit-btn">Add Task</button>
+                    </form>
+                </div>
+                
+                <!-- Completed Tasks Box -->
+                <div class="task-box">
+                    <h3>Completed Tasks</h3>
+                    <div id="completedTasksList" class="completed-tasks-list">
+                        <p class="empty-message">No completed tasks yet</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- TODO: replace placeholder notifications -->
@@ -60,6 +83,7 @@
     <footer class="footer-nav">
         
         <nav class="footer-navbar">
+            <button class="footer-button" id="homeBtn"><i class="fas fa-list-check"></i> Home</button>
             <button class="footer-button" id="tasksBtn"><i class="fas fa-list-check"></i> Manage Tasks</button>
             <button class="footer-button" id="monitorBtn"><i class="fa-solid fa-computer"></i> Notifications</button>
         </nav>
