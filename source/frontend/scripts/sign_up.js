@@ -65,9 +65,43 @@ submitBtn.addEventListener('click', async () => {
     }
     
     //Add another check if username is in use alredy 
+
+
+
     //Check email is right format
 
+    try {
+        //
+        const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Contend-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                password: password
+                //include elder accounts here
+            })
+        });
 
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Success:', data);
+            window.location.href = "caregiver_home.html";
+        }
+        else{
+            const data = await response.json();
+            messageDisplay.innerText = "Registration failed"
+        }
+
+    }
+
+    catch(error) {
+        console.error('Network error:', error);
+        messageDisplay.innerText = "Unable to connect to server"
+        return;
+    }
 
     //Redirct to account homepage
     window.location.href = "caregiver_home.html";
