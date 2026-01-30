@@ -25,6 +25,10 @@
 
         <div id="tasks" class="tasks hidden">
             <h2 class="tasks-label">Task Management</h2>
+            <select id="elderSelect" required>
+                <option value="">Select Elder</option>
+                <option value="">Tester</option>
+            </select>
             
             <div class="tasks-container">
                 <!-- Add Tasks Box -->
@@ -33,19 +37,15 @@
                     <form id="addTaskForm" class="task-form">
                         <input type="text" id="taskInput" placeholder="Enter task description" required>
                         <textarea id="taskDetails" placeholder="Task details (optional)" rows="4"></textarea>
-                        <select id="elderSelect" required>
-                            <option value="">Select Elder</option>
-                            <option value="">Tester</option>
-                        </select>
                         <button type="submit" class="submit-btn">Add Task</button>
                     </form>
                 </div>
                 
-                <!-- Completed Tasks Box -->
+                <!-- Tasks Box -->
                 <div class="task-box">
-                    <h3>Completed Tasks</h3>
-                    <div id="completedTasksList" class="completed-tasks-list">
-                        <p class="empty-message">No completed tasks yet</p>
+                    <h3>Tasks</h3>
+                    <div id="TasksList" class="-tasks-list">
+                        <p class="empty-message">No tasks yet</p>
                     </div>
                 </div>
             </div>

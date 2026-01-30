@@ -24,6 +24,7 @@ gamesBtn.addEventListener('click', async () => {
 logoutBtn.addEventListener('click', async () => {
 
     // Temporary until backend resolved
+    localStorage.clear();
     window.location.href = "home.html";
 });
 
