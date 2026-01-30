@@ -12,6 +12,10 @@ const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
 
+//Task buttons
+const addTaskForm = document.getElementById('addTaskForm')
+const tasksList = document.getElementById('TasksList');
+
 // Display username in dashboard
 const username = localStorage.getItem('username');
 if (username) {
@@ -66,12 +70,39 @@ homeBtn.addEventListener('click', async () => {
     content.classList.remove('hidden');
 });
 
+
+
 // Tasks button
 tasksBtn.addEventListener('click', async () => {
     tasks.classList.remove('hidden');
     notifs.classList.add('hidden');
     content.classList.add('hidden');
 });
+//Add task button
+addTaskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const taskName = document.getElementById('taskInput').value
+    const taskDetails = document.getElementById('taskDetails')
+
+    const emptyMsg = tasksList.querySelector('.empty-message');
+    if (emptyMsg) {
+        emptyMsg.remove();
+    }
+
+    const newTask = document.createElement('div');
+    const newId = `task-${taskName}`;
+
+    newTask.className = 'task-item';
+    newTask.id = newId;
+    newTask.textContent = taskName;
+    
+    tasksList.appendChild(newTask);
+    addTaskForm.reset();
+
+})
+
+
 
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
@@ -81,10 +112,14 @@ monitorBtn.addEventListener('click', async () => {
     loadNotifications();
 });
 
+
+
+
 // Logout button
 logoutBtn.addEventListener('click', async () => {
 
     // Temporary until backend resolved
+    localStorage.clear();
     window.location.href = "home.html";
 })
 
