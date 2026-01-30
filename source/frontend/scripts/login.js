@@ -17,8 +17,33 @@ submitBtn.addEventListener('click', async () => {
     //Add another check for username/password pair is valid
 
 
-    //Redirct to account homepage
-    localStorage.setItem('username', username);
-    window.location.href = "caregiver_home.html";
+    try {
+        const response = await fetch('http://localhost:3001/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        if (!response.ok) {
+            messageDisplay.innerText = "Login failed";
+            return;
+        }
+
+        const data = await response.json();
+        if (data.user) {
+            localStorage.setItem('userId', data.user.id);
+            localStorage.setItem('username', data.user.username);
+            localStorage.setItem('role', data.user.role);
+        }
+        window.location.href = "caregiver_home.html";
+    } catch (error) {
+        console.error('Network error:', error);
+        messageDisplay.innerText = "Unable to connect to server";
+    }
 
 });

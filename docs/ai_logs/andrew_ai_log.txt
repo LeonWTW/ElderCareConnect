@@ -3,3 +3,4 @@ Chatgbt
 - refferenecs for the server.js and package.json
 - trouble shooting when I couldn't figure out to to see it the frount and backend were talking
   to eachother
+- explained the process for how the server.js works with Docker
