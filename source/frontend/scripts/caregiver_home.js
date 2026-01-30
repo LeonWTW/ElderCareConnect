@@ -8,6 +8,9 @@ const logoutBtn = document.getElementById('logoutBtn');
 const content = document.getElementById('content');
 const tasks = document.getElementById('tasks');
 const notifs = document.getElementById('notifs');
+const notificationList = document.querySelector('.notification-list');
+
+const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
 
 //Task buttons
 const addTaskForm = document.getElementById('addTaskForm')
@@ -17,6 +20,47 @@ const tasksList = document.getElementById('TasksList');
 const username = localStorage.getItem('username');
 if (username) {
     document.getElementById('dashboardLabel').innerText = username + "'s Dashboard";
+}
+
+function renderNotifications(items) {
+    if (!notificationList) {
+        return;
+    }
+
+    if (!items || items.length === 0) {
+        notificationList.innerHTML = `<div class="notification-box">
+            <h3>No notifications</h3>
+            <p>Check-ins will appear here.</p>
+        </div>`;
+        return;
+    }
+
+    notificationList.innerHTML = items.map(item => `
+        <div class="notification-box">
+            <h3>${item.elder_name}</h3>
+            <p>Just checked in</p>
+            <span class="time">${new Date(item.created_at).toLocaleString()}</span>
+        </div>
+    `).join("");
+}
+
+async function loadNotifications() {
+    if (!caregiverId) {
+        renderNotifications([]);
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/caregivers/${caregiverId}/notifications`);
+        if (!response.ok) {
+            renderNotifications([]);
+            return;
+        }
+        const data = await response.json();
+        renderNotifications(data);
+    } catch (error) {
+        renderNotifications([]);
+    }
 }
 
 // Home button
@@ -65,6 +109,7 @@ monitorBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
     notifs.classList.remove('hidden');
     content.classList.add('hidden');
+    loadNotifications();
 });
 
 
