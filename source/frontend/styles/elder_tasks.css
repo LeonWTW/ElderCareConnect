@@ -50,11 +50,11 @@ ul {
 /* Style the list items */
 ul li {
   border-radius: 10px;
-  border: 1px solid rgb(255, 255, 255);
+  border: 3px solid rgb(233, 237, 253);
   cursor: pointer;
   position: relative;
   padding: 12px 40px;
-  background: #667eea;
+  background: #5365f1;
   font-size: 30px;
   font-weight: 700;
   color: white;
@@ -67,14 +67,11 @@ ul li {
   user-select: none;
 }
 
-/* Set all odd list items to a different color (zebra-stripes) */
-ul li:nth-child(odd) {
-  background: #764ba2;
-}
-
 /* Darker background-color on hover */
 ul li:hover {
-  background: rgb(74, 74, 74);
+  background: rgb(53, 232, 50);
+  transform: scale(1.05);
+  transition: all 0.3s;
 }
 
 /* Return to dashboard */

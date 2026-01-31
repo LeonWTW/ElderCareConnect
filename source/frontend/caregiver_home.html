@@ -18,18 +18,21 @@
     </header>
 
     <main>
-        <div id="content" class="content">
+        <div id="content" class="content hidden">
             <h2 id="dashboardLabel" class="label"></h2> <!-- Name on dashboard -->
             <p class="desc">Welcome! Manage tasks and monitor here!</p>
         </div>
 
-        <div id="tasks" class="tasks hidden">
+        <div id="tasks" class="tasks ">
             <h2 class="tasks-label">Task Management</h2>
-            <select id="elderSelect" required>
-                <option value="">Select Elder</option>
-                <option value="">Tester</option>
-            </select>
             
+            <div class="elderSelect">
+                <select id="elderSelect" required>
+                    <option value="">Select Elder to Manage</option>
+                    <option value="">Tester</option>
+                </select>
+            </div>
+
             <div class="tasks-container">
                 <!-- Add Tasks Box -->
                 <div class="task-box">
@@ -60,7 +63,7 @@
                     <p>Just checked in</p>
                     <span class="time">2 minutes ago</span>
                 </div>
-                <div class="notification-box">
+                <!-- <div class="notification-box">
                     <h3>Elder Name</h3>
                     <p>Completed task: Take medication</p>
                     <span class="time">15 minutes ago</span>
@@ -73,7 +76,7 @@
                 <div class="notification-box">
                     <h3>Elder Name</h3>
                     <p>Completed task: Take medication</p>
-                    <span class="time">15 minutes ago</span>
+                    <span class="time">15 minutes ago</span> -->
                 </div>
             </div>
         </div>
