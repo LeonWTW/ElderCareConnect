@@ -71,23 +71,27 @@ submitBtn.addEventListener('click', async () => {
     //Check email is right format
 
     try {
-        //
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch('http://localhost:3001/api/auth/register', {
             method: 'POST',
             headers: {
-                'Contend-Type': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 username: username,
                 email: email,
-                password: password
-                //include elder accounts here
+                password: password,
+                role: "caregiver"
             })
         });
 
         if (response.ok) {
             const data = await response.json();
             console.log('Success:', data);
+            if (data.user) {
+                localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('username', data.user.username);
+                localStorage.setItem('role', data.user.role);
+            }
             window.location.href = "caregiver_home.html";
         }
         else{
@@ -102,8 +106,5 @@ submitBtn.addEventListener('click', async () => {
         messageDisplay.innerText = "Unable to connect to server"
         return;
     }
-
-    //Redirct to account homepage
-    window.location.href = "caregiver_home.html";
 
 });
