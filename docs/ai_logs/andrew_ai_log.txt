@@ -4,3 +4,14 @@ Chatgbt
 - trouble shooting when I couldn't figure out to to see it the frount and backend were talking
   to eachother
 - explained the process for how the server.js works with Docker
+
+01/29/26
+assissted in set up Postgres for Node backend and wired the backend to use it for user accounts instead of
+an in‑memory array. Added DB init code and updated Docker Compose so the DB runs with the app.
+
+Worked with to built the basic “link elder ↔ caregiver → check‑in notification” flow: new backend endpoints
+for linking and check‑ins, and frontend updates so sign‑up/login store IDs, elder check‑in posts
+to the backend, and caregiver notifications load from the backend.
+
+Helped troubleshoot runtime issues (PowerShell &&, missing npm, pg not installed in container, and
+Nginx 403 due to missing index.html) and explained what those commands and errors meant.
