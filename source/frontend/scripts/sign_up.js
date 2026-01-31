@@ -50,6 +50,9 @@ submitBtn.addEventListener('click', async () => {
     const password = document.getElementById('password').value;
     const password2 = document.getElementById('password2').value;
     const email = document.getElementById('email').value;
+    const elderList = Array.from(document.querySelectorAll('.dynamic-input')).map(input => input.value);
+    console.log(elderList);
+    return
 
 
     

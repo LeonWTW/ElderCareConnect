@@ -27,15 +27,15 @@ app.get("/api/hello", (req, res) => {
 
 /* REGISTER */
 app.post("/api/auth/register", (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, password, elderList } = req.body;
 
-  if (!username || !email || !password || !role) {
+  if (!username || !email || !password || !elderList) {
     return res.status(400).json({ error: "Missing fields" });
   }
 
   pool.query(
-    "INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, username, role",
-    [username, email, password, role]
+    "INSERT INTO users (username, email, password, elderList) VALUES ($1, $2, $3, $4) RETURNING id, username, role",
+    [username, email, password, elderList]
   )
     .then(result => {
       const user = result.rows[0];
@@ -50,9 +50,15 @@ app.post("/api/auth/register", (req, res) => {
       }
       res.status(500).json({ error: "Server error" });
     });
+
+  for (const elder of elderList) {
+    if (!elder || elder.trim() == '') {continue;}
+      //link elders to account
+  }
+    
 });
 
-/* LOGIN */
+/* CAREGIVER LOGIN */
 app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -74,6 +80,15 @@ app.post("/api/auth/login", (req, res) => {
     .catch(() => {
       res.status(500).json({ error: "Server error" });
     });
+});
+
+/* ELDER LOGIN */
+app.post("/api/auth/elderLogin", (req, res) => {
+  const { elderName, caregiverName } = req.body;
+  //check caregiverName exists and is connected to elderName
+  //send status code if okay or if a check fails
+
+  
 });
 
 /* LINK ELDER TO CAREGIVER */
