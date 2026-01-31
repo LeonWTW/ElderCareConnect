@@ -66,7 +66,7 @@ a {
     display: grid;
     align-items: flex;
     justify-content: center;
-    padding: 100px 50px;
+    padding: 90px 50px;
 }
 
 .tasks-label {
@@ -79,18 +79,64 @@ a {
 .tasks-container {
     display: flex;
     gap: 30px;
-    max-width: 2000px;
+    max-width: 1200px;
     width: 100%;
+    flex-wrap: wrap;
+}
+
+.elderSelect {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: -50px;
+    padding: 30px 0px;
+}
+
+/* Actual selection box */
+#elderSelect {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    padding: 20px 100px;
+    font-size: 20px;
+    font-weight: 300;
+    border: 2px solid lightgrey;
+    border-radius: 12px;
 }
 
 .task-box {
     flex: 1;
-    min-width: 700px;
+    min-width: 300px;
     background-color: white;
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     border: 1px solid rgb(220, 220, 220);
+}
+
+/* Screen resizing specifics */
+@media (max-width: 768px) {
+    .tasks-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .task-box {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .task-box h3 {
+        font-size: 24px;
+    }
+
+    .task-form input[type="text"],
+    .task-form textarea,
+    .task-form select {
+        font-size: 16px;
+    }
+
+    .submit-btn {
+        font-size: 16px;
+    }
 }
 
 .task-box h3 {
@@ -208,7 +254,7 @@ a {
 
 .notification-box {
     background-color: white;
-    border-left: 5px solid rgb(161, 7, 7);
+    border-left: 5px solid rgb(102, 133, 255);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
