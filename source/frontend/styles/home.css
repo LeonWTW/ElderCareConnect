@@ -118,15 +118,46 @@ footer {
 
 .hero-img {
     flex: 1;
+    z-index: 900;
     min-width: 300px;
     border: 2px solid black;
     border-radius: 10px;
     box-shadow: 4px 4px 0px black;
+    transition: all 0.3s ease-out;
 }
 
 .hero-img img {
+    display: block;
     border-radius: 10px;
     width: 100%;
+}
+
+.hero-img2 {
+    flex: 1;
+    min-width: 300px;
+    border: 2px solid black;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0px black;
+    margin-left: -650px;
+    margin-top: 150px;
+    transition: all 0.3s ease-out;
+}
+
+.hero-img2 img {
+    display: block;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.hero-img:hover {
+    scale: 1.1;
+    transition: all 0.3s;
+}
+
+.hero-img2:hover {
+    scale: 1.1;
+    z-index: 901;
+    transition: all 0.3s;
 }
 
 /* Info Section */
@@ -152,7 +183,13 @@ footer {
     background-color: rgb(254, 255, 255);
     border: 3px solid grey;
     border-radius: 8px;
+    transition: all ease-out 0.3s;
 
+}
+
+.info-card:hover {
+    scale: 1.05;
+    transition: all 0.3s;
 }
 
 .info-card-title {
@@ -166,7 +203,12 @@ footer {
 
 .info-img {
     width: 100%;
-    padding-bottom: 20px;
+    border: 2px solid grey;
+    border-radius: 8px;
+}
+
+.games {
+    height: 56%;
 }
 
 /* Demo Section */
@@ -237,6 +279,12 @@ footer {
     padding: 0px 20px;
     border: 2px solid grey;
     border-radius: 8px;
+    transition: all 0.3s ease-out;
+}
+
+.summary-card:hover {
+    scale: 1.1;
+    transition: all 0.3s;
 }
 
 .summary-card-desc {
