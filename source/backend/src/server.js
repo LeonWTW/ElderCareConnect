@@ -26,60 +26,50 @@ app.get("/api/hello", (req, res) => {
 });
 
 /* REGISTER */
-app.post("/api/auth/register", (req, res) => {
+app.post("/api/auth/register", async (req, res) => {
   const { username, email, password, elderList } = req.body;
 
   if (!username || !email || !password || !elderList) {
     return res.status(400).json({ error: "Missing fields" });
   }
 
-  pool.query(
-    "INSERT INTO users (username, email, password, elderList) VALUES ($1, $2, $3, $4) RETURNING id, username, role",
-    [username, email, password, elderList]
-  )
-    .then(result => {
-      const user = result.rows[0];
-      res.status(201).json({
-        message: "User registered",
-        user
-      });
-    })
-    .catch(err => {
-      if (err.code === "23505") {
-        return res.status(409).json({ error: "Username or email already exists" });
-      }
-      res.status(500).json({ error: "Server error" });
-    });
+  const client = await pool.connect();
 
-  for (const elder of elderList) {
-    if (!elder || elder.trim() == '') {continue;}
-      //link elders to account
-  }
+  try {
+    await client.query('BEGIN');
+
+    const newUser = await client.query(
+      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username",
+      [username, email, password]
+    );
+
+    const newId = newUser.rows[0].id;
+
+    await client.query(
+      "INSERT INTO care_links (caregiver_id, elder_names) VALUES ($1, $2)",
+      [newId, elderList]
+    );
+
+    await client.query('COMMIT');
+
+    res.status(201).json({
+      message: "User and Care List registered",
+      user: newUser.rows[0]
+    });
     
+  } catch (err) {
+    await client.query('ROLLBACK');
+    if (err.code === "23505")
+  }
+
 });
 
 /* CAREGIVER LOGIN */
 app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
 
-  pool.query(
-    "SELECT id, username, role FROM users WHERE username = $1 AND password = $2",
-    [username, password]
-  )
-    .then(result => {
-      const user = result.rows[0];
-      if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
 
-      res.json({
-        message: "Login successful",
-        user
-      });
-    })
-    .catch(() => {
-      res.status(500).json({ error: "Server error" });
-    });
+ 
 });
 
 /* ELDER LOGIN */
