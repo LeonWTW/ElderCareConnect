@@ -25,9 +25,11 @@ User Page (Elder):
     - Logout button resize and centering
     - Implemented todo list
     - Check in notification text and styling - 1/28
+    - Fade out class for notification
 
     JS:
-    -
+    - Fade out check-in notification after a given time
+    - Only allow user to hit check in button once after a given amount of time
 
 User Page (Caregiver):
 
@@ -37,6 +39,7 @@ User Page (Caregiver):
     - Implemented notification box - 1/28
     - Created the two task boxes: needs a lot of fixing styling wise so I'm reviewing html and applying my personal changes
         - Decent chunk of CSS code implemented, therefore this needed to be more descriptive.
+    - Resizing task boxes for when the window is resized - 1/30
 
     JS:
     - Helped me hide and show items upon button click - 1/27
