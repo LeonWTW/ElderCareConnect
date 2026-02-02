@@ -17,16 +17,14 @@ export async function initDb() {
       username TEXT UNIQUE NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
-      role TEXT NOT NULL
     );
   `);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS care_links (
       id SERIAL PRIMARY KEY,
-      elder_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      caregiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      UNIQUE(elder_id, caregiver_id)
+      caregiver_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      elder_names TEXT[] DEFAULT '{}' -- A simple list of names (e.g., {"Alice", "Bob"})
     );
   `);
 
@@ -38,6 +36,23 @@ export async function initDb() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
+
+  await pool.query(`
+  CREATE TABLE IF NOT EXISTS elder_tasks (
+    id SERIAL PRIMARY KEY,
+    caregiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    elder_name TEXT NOT NULL,
+    task_name TEXT NOT NULL,      -- Your "string" (e.g., 'Morning Meds')
+    additional_info TEXT,
+    is_completed BOOLEAN DEFAULT FALSE, -- Your "0/1" (True/False is cleaner)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Prevents the same task name appearing twice for the same elder
+    UNIQUE(caregiver_id, elder_name, task_name)
+  );
+`);
+
+
 }
 
 export default pool;

@@ -51,8 +51,6 @@ submitBtn.addEventListener('click', async () => {
     const password2 = document.getElementById('password2').value;
     const email = document.getElementById('email').value;
     const elderList = Array.from(document.querySelectorAll('.dynamic-input')).map(input => input.value);
-    console.log(elderList);
-    return
 
 
     
@@ -67,10 +65,7 @@ submitBtn.addEventListener('click', async () => {
         return;
     }
     
-    //Add another check if username is in use alredy 
-
-
-
+    //Check to make sure no duplicate elder names
     //Check email is right format
 
     try {
@@ -83,7 +78,7 @@ submitBtn.addEventListener('click', async () => {
                 username: username,
                 email: email,
                 password: password,
-                role: "caregiver"
+                eldersList: elderList
             })
         });
 
