@@ -38,7 +38,6 @@ submitBtn.addEventListener('click', async () => {
         if (data.user) {
             localStorage.setItem('userId', data.user.id);
             localStorage.setItem('username', data.user.username);
-            localStorage.setItem('role', data.user.role);
         }
         window.location.href = "caregiver_home.html";
     } catch (error) {

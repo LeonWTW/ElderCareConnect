@@ -32,10 +32,8 @@ submitBtn.addEventListener('click', async () => {
 
         const data = await response.json();
         if (data.elder && data.caregiver) {
-            localStorage.setItem('elderId', data.elder.id);
             localStorage.setItem('elderName', data.elder.username);
             localStorage.setItem('caregiverId', data.caregiver.id);
-            localStorage.setItem('caregiverName', data.caregiver.username);
         }
 
         window.location.href = "elder_home.html";

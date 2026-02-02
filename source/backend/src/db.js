@@ -16,7 +16,7 @@ export async function initDb() {
       id SERIAL PRIMARY KEY,
       username TEXT UNIQUE NOT NULL,
       email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
+      password TEXT NOT NULL
     );
   `);
 
@@ -24,10 +24,26 @@ export async function initDb() {
     CREATE TABLE IF NOT EXISTS care_links (
       id SERIAL PRIMARY KEY,
       caregiver_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      elder_names TEXT[] DEFAULT '{}' -- A simple list of names (e.g., {"Alice", "Bob"})
+      elder_names TEXT[] DEFAULT '{}'
     );
   `);
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS elder_tasks (
+      id SERIAL PRIMARY KEY,
+      caregiver_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      elder_name TEXT NOT NULL
+      task_name TEXT NOT NULL
+      description TEXT
+      is_complete BOOLEAN DEFAULT FALSE,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(caregiver_id, elder_name, task_name)
+    );
+  `)
+
+
+
+  //hasn't been updated yet
   await pool.query(`
     CREATE TABLE IF NOT EXISTS checkins (
       id SERIAL PRIMARY KEY,
@@ -36,23 +52,6 @@ export async function initDb() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
-
-  await pool.query(`
-  CREATE TABLE IF NOT EXISTS elder_tasks (
-    id SERIAL PRIMARY KEY,
-    caregiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    elder_name TEXT NOT NULL,
-    task_name TEXT NOT NULL,      -- Your "string" (e.g., 'Morning Meds')
-    additional_info TEXT,
-    is_completed BOOLEAN DEFAULT FALSE, -- Your "0/1" (True/False is cleaner)
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    -- Prevents the same task name appearing twice for the same elder
-    UNIQUE(caregiver_id, elder_name, task_name)
-  );
-`);
-
-
 }
 
 export default pool;
