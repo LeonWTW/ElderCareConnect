@@ -36,9 +36,9 @@ app.post("/api/auth/register", async (req, res) => {
     return res.status(400).json({ error: "Missing fields" });
   }
 
-  const client = await pool.connect();
-
+  let client;
   try {
+    client = await pool.connect();
     await client.query('BEGIN');
 
     const newUser = await client.query(
