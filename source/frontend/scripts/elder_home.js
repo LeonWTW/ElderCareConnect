@@ -20,8 +20,9 @@ checkinBtn.addEventListener('click', async () => {
     success.classList.remove('fade-out');
     success.classList.add("fade-in");
 
-    const elderId = localStorage.getItem('elderId');
-    if (!elderId) {
+    const elderName = localStorage.getItem('elderName');
+    const caregiverId = localStorage.getItem('caregiverId');
+    if (!elderName || !caregiverId) {
         success.classList.remove('hidden');
         success.innerText = "Missing elder account. Please log in again.";
         return;
@@ -47,7 +48,7 @@ checkinBtn.addEventListener('click', async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ elderId })
+            body: JSON.stringify({ elderName, caregiverId })
         });
 
         if (!response.ok) {
