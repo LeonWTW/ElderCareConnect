@@ -28,7 +28,7 @@ User Page (Elder):
     - Fade out class for notification
 
     JS:
-    - Fade out check-in notification after a given time
+    - Fade out check-in notification after a given time - 1/31
     - Only allow user to hit check in button once after a given amount of time
 
 User Page (Caregiver):
@@ -44,3 +44,7 @@ User Page (Caregiver):
     JS:
     - Helped me hide and show items upon button click - 1/27
     - Took the username input from the login to display on the dashboard - 1/28
+
+Backend:
+    - Everyone needed to work together to make adjustments to the DB, so I need help converting an entry into something else 
+    since originally we stored elders as users, but now we're not so we needed to change all "elderId" instances to "elderName, caregiverId" - 2/5 

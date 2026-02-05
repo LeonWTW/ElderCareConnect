@@ -145,25 +145,25 @@ app.post("/api/auth/elderLogin", async (req, res) => {
 
 /* CREATE CHECK-IN */
 app.post("/api/checkins", (req, res) => {
-  const { elderId } = req.body;
+  const { elderName, caregiverId } = req.body;
 
-  if (!elderId) {
-    return res.status(400).json({ error: "Missing elderId" });
+  if (!elderName || !caregiverId) {
+    return res.status(400).json({ error: "Missing elderName or caregiverId" });
   }
 
   pool.query(
-    "SELECT caregiver_id FROM care_links WHERE elder_id = $1",
-    [elderId]
+    "SELECT 1 FROM care_links WHERE caregiver_id = $1 AND $2 = ANY(elder_names)",
+    [caregiverId, elderName]
   )
     .then(result => {
       if (result.rows.length === 0) {
-        return res.status(404).json({ error: "No caregiver linked to this elder" });
+        return res.status(404).json({ error: "Elder not linked to caregiver" });
       }
 
       const inserts = result.rows.map(row => {
         return pool.query(
-          "INSERT INTO checkins (elder_id, caregiver_id) VALUES ($1, $2)",
-          [elderId, row.caregiver_id]
+          "INSERT INTO checkins (elder_name, caregiver_id) VALUES ($1, $2)",
+          [elderName, caregiverId]
         );
       });
 
@@ -182,11 +182,10 @@ app.get("/api/caregivers/:caregiverId/notifications", (req, res) => {
 
   pool.query(
     `
-      SELECT c.id, c.created_at, u.username AS elder_name
-      FROM checkins c
-      JOIN users u ON u.id = c.elder_id
-      WHERE c.caregiver_id = $1
-      ORDER BY c.created_at DESC
+      SELECT id, elder_name, created_at
+      FROM checkins
+      WHERE caregiver_id = $1
+      ORDER BY created_at DESC
       LIMIT 20
     `,
     [caregiverId]
