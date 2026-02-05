@@ -2,5 +2,9 @@ Jan 20
 
 Used Gemini as a refrence for things such as general js syntax, function structures, and overview of what information should be relayed between frontend and backend 
 
--------
 
+------
+
+Jan 30 
+
+Used gemini to help read through the server interactions with the db to understand the syntax
