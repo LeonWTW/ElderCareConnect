@@ -10,8 +10,8 @@ The users of the product will be the elderly with declining cognitive function a
         - Todo lists
         - Check-in button
     - More defined for caregiver
-        - Linked todo lists to track elder
-        - 
+        - Linked notifications to track elder
+        - Task management
 
 #### Backend
 - Learn and develop with Node.js
