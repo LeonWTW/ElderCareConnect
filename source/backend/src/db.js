@@ -47,7 +47,7 @@ export async function initDb() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS checkins (
       id SERIAL PRIMARY KEY,
-      elder_name TEXT NOT NULL 
+      elder_name TEXT NOT NULL, 
       caregiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );

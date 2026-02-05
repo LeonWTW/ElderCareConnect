@@ -30,9 +30,10 @@ app.get("/api/hello", (req, res) => {
 
 /* REGISTER */
 app.post("/api/auth/register", async (req, res) => {
-  const { username, email, password, elderList } = req.body;
+  // TODO: Fix DB entries
+  const { username, email, password, eldersList } = req.body;
 
-  if (!username || !email || !password || !elderList) {
+  if (!username || !email || !password || !Array.isArray(eldersList)) {
     return res.status(400).json({ error: "Missing fields" });
   }
 
@@ -50,7 +51,7 @@ app.post("/api/auth/register", async (req, res) => {
 
     await client.query(
       "INSERT INTO care_links (caregiver_id, elder_names) VALUES ($1, $2)",
-      [newId, elderList]
+      [newId, eldersList]
     );
 
     await client.query('COMMIT');
