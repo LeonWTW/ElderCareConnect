@@ -15,3 +15,6 @@ to the backend, and caregiver notifications load from the backend.
 
 Helped troubleshoot runtime issues (PowerShell &&, missing npm, pg not installed in container, and
 Nginx 403 due to missing index.html) and explained what those commands and errors meant.
+
+02/07/2026
+assissted in troubleshooting after I implemented password hashing with bcrypt

@@ -89,6 +89,7 @@ submitBtn.addEventListener('click', async () => {
             console.log('Success:', data);
             if (data.user) {
                 localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('username', data.user.username);
             }
             window.location.href = "caregiver_home.html";
         }
