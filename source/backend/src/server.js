@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import bcrypt from "bcrypt";
 import pool, { initDb } from "./db.js";
 
 const app = express();
@@ -37,6 +38,8 @@ app.post("/api/auth/register", async (req, res) => {
     return res.status(400).json({ error: "Missing fields" });
   }
 
+  const passwordHash = await bcrypt.hash(password, 12);
+
   let client;
   try {
     client = await pool.connect();
@@ -44,7 +47,7 @@ app.post("/api/auth/register", async (req, res) => {
 
     const newUser = await client.query(
       "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username",
-      [username, email, password]
+      [username, email, passwordHash]
     );
 
     const newId = newUser.rows[0].id;
@@ -62,7 +65,9 @@ app.post("/api/auth/register", async (req, res) => {
     });
     
   } catch (err) {
-    await client.query('ROLLBACK');
+    if (client) {
+      await client.query('ROLLBACK');
+    }
     if (err.code === "23505"){
       res.status(409).json({ error: "Username or email already in use" });
     } else {
@@ -70,32 +75,38 @@ app.post("/api/auth/register", async (req, res) => {
       res.status(500).json({ error: "Server error" });
     }
   } finally {
-    client.release();
+    if (client) {
+      client.release();
+    }
   }
 });
 
 /* CAREGIVER LOGIN */
-app.post("/api/auth/login", (req, res) => {
+app.post("/api/auth/login", async (req, res) => {
   const { username, password } = req.body;
 
-  pool.query(
-    "SELECT id, username FROM users WHERE username = $1 AND password = $2",
-    [username, password]
-  )
-    .then(result => {
-      const user = result.rows[0];
-      if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
+  try {
+    const result = await pool.query(
+      "SELECT id, username, password FROM users WHERE username = $1",
+      [username]
+    );
+    const user = result.rows[0];
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
-      res.json({
-        message: "Login successful",
-        user
-      });
-    })
-    .catch(() => {
-      res.status(500).json({ error: "Server error" });
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    res.json({
+      message: "Login successful",
+      user: { id: user.id, username: user.username }
     });
+  } catch {
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 
