@@ -89,12 +89,13 @@ submitBtn.addEventListener('click', async () => {
             console.log('Success:', data);
             if (data.user) {
                 localStorage.setItem('userId', data.user.id);
+                localStorage.setItem('username', username);
             }
             window.location.href = "caregiver_home.html";
         }
         else{
             const data = await response.json();
-            messageDisplay.innerText = "Registration failed"
+            messageDisplay.innerText = data.error;
         }
 
     }
