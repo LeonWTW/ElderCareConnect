@@ -12,7 +12,7 @@ const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
 
-// Task elements
+//Task buttons
 const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
 const elderSelect = document.getElementById('elderSelect');
@@ -209,6 +209,41 @@ tasksBtn.addEventListener('click', async () => {
     content.classList.add('hidden');
     loadElders();
 });
+//Add task button
+addTaskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const taskName = document.getElementById('taskInput').value;
+    const taskDetails = document.getElementById('taskDetails').value;
+
+    const emptyMsg = tasksList.querySelector('.empty-message');
+    if (emptyMsg) {
+        emptyMsg.remove();
+    }
+
+    // Create new task with description
+    const newTask = document.createElement('div');
+    const newTitle = document.createElement('p');
+    const newDesc = document.createElement('p');
+
+    newTask.className = 'task-item';
+    newTitle.className = 'task-title';
+    newDesc.className = 'task-details';
+
+    newTitle.textContent = taskName;
+    newDesc.textContent = taskDetails;
+    newTask.appendChild(newTitle);
+    newTask.appendChild(newDesc);
+
+    tasksList.appendChild(newTask);
+    addTaskForm.reset();
+
+})
+// Elder Selection
+
+
+
+
 
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
@@ -220,7 +255,6 @@ monitorBtn.addEventListener('click', async () => {
 
 // Logout button
 logoutBtn.addEventListener('click', async () => {
-    // Temporary until backend resolved
     localStorage.clear();
     window.location.href = "home.html";
 });

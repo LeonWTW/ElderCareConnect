@@ -194,7 +194,7 @@ a {
     background-color: rgb(60, 90, 235);
 }
 
-.completed-tasks-list {
+.tasks-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -202,25 +202,24 @@ a {
     overflow-y: auto;
 }
 
-.completed-task-item {
+.task-item {
     background-color: #f9f9f9;
-    border-left: 4px solid rgb(76, 175, 80);
+    border-left: 8px solid rgb(255, 0, 0);
     padding: 12px;
     border-radius: 4px;
-    font-size: 20px;
 }
 
-.completed-task-item strong {
-    display: block;
-    margin-bottom: 4px;
-    color: #333;
+.task-title {
+  margin: 0;
+  font-size: 25px;
+  border-bottom: 1px solid lightgrey;
 }
 
-.completed-task-item span {
-    display: block;
-    color: #666;
-    font-size: 12px;
-    margin-top: 4px;
+.task-details {
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #666;
 }
 
 .empty-message {
