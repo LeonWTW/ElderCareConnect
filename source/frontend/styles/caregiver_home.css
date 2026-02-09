@@ -16,6 +16,12 @@ a {
     text-decoration: none; /* Removes the link underline*/
 }
 
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none; /* Prevents clicking a hidden element */
+}
+
 /* Navbar Elements */
 .navbar {
     display: flex;
@@ -205,21 +211,46 @@ a {
 .task-item {
     background-color: #f9f9f9;
     border-left: 8px solid rgb(255, 0, 0);
-    padding: 12px;
+    padding: 10px;
     border-radius: 4px;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-item.completed {
+    border-left: 8px solid rgb(0, 255, 0);
 }
 
 .task-title {
   margin: 0;
-  font-size: 25px;
+  font-size: 20px;
   border-bottom: 1px solid lightgrey;
 }
 
-.task-details {
-  margin: 5px 0 0 0;
+.task-desc {
+  margin: 5px 0px 5px 0px;
   font-size: 0.9rem;
   font-style: italic;
-  color: #666;
+  color: #626262;
+}
+
+.task-status {
+    font-size: 15px;
+    font-weight: 200;
+    font-style: italic;
+}
+
+.delete-btn {
+    align-items: right;
+    font-size: 14px;
+    padding: 6px 12px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .empty-message {
@@ -352,4 +383,3 @@ a {
     background-color: rgb(223, 223, 223);
     cursor: pointer;
 }
-
