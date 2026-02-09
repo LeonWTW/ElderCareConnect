@@ -187,6 +187,116 @@ app.post("/api/checkins", (req, res) => {
     });
 });
 
+/* GET ELDER LIST FOR A CAREGIVER */
+app.get("/api/caregivers/:caregiverId/elders", async (req, res) => {
+  const caregiverId = req.params.caregiverId;
+
+  try {
+    const result = await pool.query(
+      "SELECT elder_names FROM care_links WHERE caregiver_id = $1",
+      [caregiverId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.json([]);
+    }
+
+    res.json(result.rows[0].elder_names || []);
+  } catch {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+/* CREATE TASK */
+app.post("/api/tasks", async (req, res) => {
+  const { caregiverId, elderName, taskName, description } = req.body;
+
+  if (!caregiverId || !elderName || !taskName) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO elder_tasks (caregiver_id, elder_name, task_name, description)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [caregiverId, elderName, taskName, description || null]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    if (err.code === "23505") {
+      res.status(409).json({ error: "Task already exists for this elder" });
+    } else {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+  }
+});
+
+/* GET TASKS FOR AN ELDER */
+app.get("/api/tasks/:caregiverId/:elderName", async (req, res) => {
+  const { caregiverId, elderName } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT id, task_name, description, is_complete, updated_at
+       FROM elder_tasks
+       WHERE caregiver_id = $1 AND elder_name = $2
+       ORDER BY id ASC`,
+      [caregiverId, elderName]
+    );
+
+    res.json(result.rows);
+  } catch {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+/* UPDATE TASK STATUS */
+app.patch("/api/tasks/:taskId", async (req, res) => {
+  const { taskId } = req.params;
+  const { isComplete } = req.body;
+
+  try {
+    const result = await pool.query(
+      `UPDATE elder_tasks
+       SET is_complete = $1, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $2
+       RETURNING *`,
+      [isComplete, taskId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+/* DELETE TASK */
+app.delete("/api/tasks/:taskId", async (req, res) => {
+  const { taskId } = req.params;
+
+  try {
+    const result = await pool.query(
+      "DELETE FROM elder_tasks WHERE id = $1 RETURNING *",
+      [taskId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json({ message: "Task deleted" });
+  } catch {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 /* CAREGIVER NOTIFICATIONS */
 app.get("/api/caregivers/:caregiverId/notifications", (req, res) => {
   const caregiverId = req.params.caregiverId;
