@@ -29,12 +29,13 @@ submitBtn.addEventListener('click', async () => {
             })
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            messageDisplay.innerText = "Login failed";
+            messageDisplay.innerText = data.error;
             return;
         }
 
-        const data = await response.json();
         if (data.user) {
             localStorage.setItem('userId', data.user.id);
             localStorage.setItem('username', data.user.username);
