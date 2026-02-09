@@ -12,9 +12,10 @@ const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
 
-//Task buttons
-const addTaskForm = document.getElementById('addTaskForm')
+// Task elements
+const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
+const elderSelect = document.getElementById('elderSelect');
 
 // Display username in dashboard
 const username = localStorage.getItem('username');
@@ -22,10 +23,139 @@ if (username) {
     document.getElementById('dashboardLabel').innerText = username + "'s Dashboard";
 }
 
-function renderNotifications(items) {
-    if (!notificationList) {
+// ==================== Elder List ====================
+
+// Load elder names from the API and populate the dropdown
+async function loadElders() {
+    if (!caregiverId) return;
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/caregivers/${caregiverId}/elders`);
+        if (!response.ok) return;
+
+        const elders = await response.json();
+
+        // Remove any existing options except the default one
+        elderSelect.innerHTML = '<option value="">Select Elder to Manage</option>';
+
+        elders.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            elderSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Failed to load elders:', error);
+    }
+}
+
+// When an elder is selected, load their tasks
+elderSelect.addEventListener('change', () => {
+    const selectedElder = elderSelect.value;
+    if (selectedElder) {
+        loadTasks(selectedElder);
+    } else {
+        tasksList.innerHTML = '<p class="empty-message">No tasks yet</p>';
+    }
+});
+
+// ==================== Task Management ====================
+
+// Fetch and render tasks for a specific elder
+async function loadTasks(elderName) {
+    if (!caregiverId) return;
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/tasks/${caregiverId}/${encodeURIComponent(elderName)}`);
+        if (!response.ok) return;
+
+        const taskData = await response.json();
+        renderTasks(taskData);
+    } catch (error) {
+        console.error('Failed to load tasks:', error);
+    }
+}
+
+// Render the task list in the DOM
+function renderTasks(taskData) {
+    if (!taskData || taskData.length === 0) {
+        tasksList.innerHTML = '<p class="empty-message">No tasks yet</p>';
         return;
     }
+
+    tasksList.innerHTML = taskData.map(task => `
+        <div class="task-item ${task.is_complete ? 'completed' : ''}" id="task-${task.id}">
+            <div class="task-info">
+                <strong>${task.task_name}</strong>
+                ${task.description ? `<p>${task.description}</p>` : ''}
+                <span class="task-status">${task.is_complete ? 'Completed' : 'Pending'}</span>
+            </div>
+            <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
+        </div>
+    `).join('');
+}
+
+// Submit new task to the API
+addTaskForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const elderName = elderSelect.value;
+    if (!elderName) {
+        alert('Please select an elder first');
+        return;
+    }
+
+    const taskName = document.getElementById('taskInput').value.trim();
+    const description = document.getElementById('taskDetails').value.trim();
+
+    if (!taskName) return;
+
+    try {
+        const response = await fetch('http://localhost:3001/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                caregiverId: caregiverId,
+                elderName: elderName,
+                taskName: taskName,
+                description: description || null
+            })
+        });
+
+        if (response.ok) {
+            addTaskForm.reset();
+            loadTasks(elderName);
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Failed to add task');
+        }
+    } catch (error) {
+        console.error('Failed to create task:', error);
+        alert('Unable to connect to server');
+    }
+});
+
+// Delete a task via the API
+async function deleteTask(taskId) {
+    const elderName = elderSelect.value;
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/tasks/${taskId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok && elderName) {
+            loadTasks(elderName);
+        }
+    } catch (error) {
+        console.error('Failed to delete task:', error);
+    }
+}
+
+// ==================== Notifications ====================
+
+function renderNotifications(items) {
+    if (!notificationList) return;
 
     if (!items || items.length === 0) {
         notificationList.innerHTML = `<div class="notification-box">
@@ -63,6 +193,8 @@ async function loadNotifications() {
     }
 }
 
+// ==================== Navigation ====================
+
 // Home button
 homeBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
@@ -70,39 +202,13 @@ homeBtn.addEventListener('click', async () => {
     content.classList.remove('hidden');
 });
 
-
-
-// Tasks button
+// Tasks button - load elders when switching to task view
 tasksBtn.addEventListener('click', async () => {
     tasks.classList.remove('hidden');
     notifs.classList.add('hidden');
     content.classList.add('hidden');
+    loadElders();
 });
-//Add task button
-addTaskForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const taskName = document.getElementById('taskInput').value
-    const taskDetails = document.getElementById('taskDetails')
-
-    const emptyMsg = tasksList.querySelector('.empty-message');
-    if (emptyMsg) {
-        emptyMsg.remove();
-    }
-
-    const newTask = document.createElement('div');
-    const newId = `task-${taskName}`;
-
-    newTask.className = 'task-item';
-    newTask.id = newId;
-    newTask.textContent = taskName;
-    
-    tasksList.appendChild(newTask);
-    addTaskForm.reset();
-
-})
-
-
 
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
@@ -112,14 +218,9 @@ monitorBtn.addEventListener('click', async () => {
     loadNotifications();
 });
 
-
-
-
 // Logout button
 logoutBtn.addEventListener('click', async () => {
-
     // Temporary until backend resolved
     localStorage.clear();
     window.location.href = "home.html";
-})
-
+});
