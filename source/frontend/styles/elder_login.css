@@ -59,13 +59,13 @@ footer {
     gap: 30px;
     border: 1px solid lightgrey;
     border-radius: 8px;
-    min-width: 40vh;
+    min-width: 50vh;
 }
 
 .label {
     text-align: center;
-    font-weight: 400;
-    font-size: 70px;
+    font-weight: 500;
+    font-size: 60px;
     text-decoration: underline 2px lightgrey;
 }
 
@@ -80,14 +80,17 @@ footer {
 }
 
 label {
-    font-size: 30px;
+    font-size: 25px;
     font-weight: 400;
 }
 
 input {
     font-size: 20px;
     font-weight: 100;
+    padding: 10px;
     color: rgb(36, 124, 255);
+    border: 1px solid grey;
+    border-radius: 10px;
 }
 
 #submitBtn {
@@ -95,10 +98,14 @@ input {
     font-size: 40px;
     font-weight: 200;
     padding: 10px;
+    background-color: #86acff;
+    border: 2px solid grey;
+    border-radius: 10px;
 }
 
 #submitBtn:hover {
     cursor: pointer;
+    background-color: lightgrey;
 }
 
 #message {
