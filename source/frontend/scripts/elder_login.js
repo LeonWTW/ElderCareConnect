@@ -13,7 +13,7 @@ submitBtn.addEventListener('click', async () => {
     }
     
     try {
-        const response = await fetch('http://localhost:3001/api/auth/elderLogin', {
+        const response = await fetch('http://localhost:3002/api/auth/elderLogin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

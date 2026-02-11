@@ -18,3 +18,7 @@ Nginx 403 due to missing index.html) and explained what those commands and error
 
 02/07/2026
 assissted in troubleshooting after I implemented password hashing with bcrypt
+
+02/11/2026
+-assissted in sending a notification when a task was complete
+-assissted in troubleshooting after implementation of task completion notification broke api test button

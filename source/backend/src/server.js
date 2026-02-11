@@ -257,18 +257,37 @@ app.get("/api/tasks/:caregiverId/:elderName", async (req, res) => {
 app.patch("/api/tasks/:taskId", async (req, res) => {
   const { taskId } = req.params;
   const { isComplete } = req.body;
+  const nextIsComplete = isComplete === true || isComplete === "true";
 
   try {
+    const existing = await pool.query(
+      `SELECT id, caregiver_id, elder_name, task_name, is_complete
+       FROM elder_tasks
+       WHERE id = $1`,
+      [taskId]
+    );
+
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    const previousTask = existing.rows[0];
+
     const result = await pool.query(
       `UPDATE elder_tasks
        SET is_complete = $1, updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
        RETURNING *`,
-      [isComplete, taskId]
+      [nextIsComplete, taskId]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Task not found" });
+    // Only create a notification on a transition to "complete".
+    if (nextIsComplete && !previousTask.is_complete) {
+      await pool.query(
+        `INSERT INTO checkins (elder_name, caregiver_id, event_type, task_name)
+         VALUES ($1, $2, 'task_completed', $3)`,
+        [previousTask.elder_name, previousTask.caregiver_id, previousTask.task_name]
+      );
     }
 
     res.json(result.rows[0]);
@@ -303,7 +322,11 @@ app.get("/api/caregivers/:caregiverId/notifications", (req, res) => {
 
   pool.query(
     `
-      SELECT id, elder_name, created_at
+      SELECT id, elder_name, created_at, event_type, task_name,
+      CASE
+        WHEN event_type = 'task_completed' THEN CONCAT(elder_name, ' completed task: ', task_name)
+        ELSE CONCAT(elder_name, ' checked in')
+      END AS message
       FROM checkins
       WHERE caregiver_id = $1
       ORDER BY created_at DESC
@@ -319,7 +342,7 @@ app.get("/api/caregivers/:caregiverId/notifications", (req, res) => {
     });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);
 });

@@ -50,8 +50,21 @@ export async function initDb(retries = 10, delay = 3000) {
           id SERIAL PRIMARY KEY,
           elder_name TEXT NOT NULL,
           caregiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          event_type TEXT NOT NULL DEFAULT 'checkin',
+          task_name TEXT,
           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
+      `);
+
+      // Ensure older databases also have notification metadata columns.
+      await pool.query(`
+        ALTER TABLE checkins
+        ADD COLUMN IF NOT EXISTS event_type TEXT NOT NULL DEFAULT 'checkin'
+      `);
+
+      await pool.query(`
+        ALTER TABLE checkins
+        ADD COLUMN IF NOT EXISTS task_name TEXT
       `);
 
       console.log("Database initialized successfully");
