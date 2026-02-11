@@ -3,11 +3,13 @@ const homeBtn = document.getElementById('homeBtn');
 const tasksBtn = document.getElementById('tasksBtn');
 const monitorBtn = document.getElementById('monitorBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+const addElderBtn = document.getElementById('addElderBtn');
 
 // Content
 const content = document.getElementById('content');
 const tasks = document.getElementById('tasks');
 const notifs = document.getElementById('notifs');
+const addElder = document.getElementById('addElder');
 const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
@@ -199,14 +201,24 @@ async function loadNotifications() {
 homeBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
     notifs.classList.add('hidden');
+    addElder.classList.add('hidden');
     content.classList.remove('hidden');
+});
+
+//Add Elder
+addElderBtn.addEventListener('click', async () => {
+    tasks.classList.add('hidden');
+    notifs.classList.add('hidden');
+    content.classList.add('hidden');
+    addElder.classList.remove('hidden');
 });
 
 // Tasks button - load elders when switching to task view
 tasksBtn.addEventListener('click', async () => {
-    tasks.classList.remove('hidden');
     notifs.classList.add('hidden');
     content.classList.add('hidden');
+    addElder.classList.add('hidden');
+    tasks.classList.remove('hidden');
     loadElders();
 });
 //Add task button
@@ -248,8 +260,9 @@ addTaskForm.addEventListener('submit', (event) => {
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
-    notifs.classList.remove('hidden');
+    addElder.classList.add('hidden');
     content.classList.add('hidden');
+    notifs.classList.remove('hidden');
     loadNotifications();
 });
 
