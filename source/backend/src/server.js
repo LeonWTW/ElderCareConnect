@@ -326,6 +326,43 @@ app.listen(PORT, () => {
 
 
 /* CREATE CHECK-IN */
-app.post("/api/addElder", (req, res) => {
-  
+app.post('/api/addElder', async (req, res) => {
+  const { userId, newElder } = req.body;
+
+  if (!userId || !newElder) {
+      return res.status(400).json({ error: 'Missing required fields.' });
+  }
+
+  try {
+      const result = await pool.query(
+          'SELECT elder_names FROM care_links WHERE caregiver_id = $1',
+          [userId]
+      );
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ error: 'Caregiver not found.' });
+      }
+
+      const currentElders = result.rows[0].elder_names || [];
+
+      if (currentElders.includes(newElder)) {
+          return res.status(409).json({ error: 'This elder is already in your list.' });
+      }
+
+      const updateResult = await pool.query(
+          `UPDATE care_links 
+           SET elder_names = array_append(elder_names, $1) 
+           WHERE caregiver_id = $2 
+           RETURNING elder_names`,
+          [newElder, userId]
+      );
+
+      res.status(200).json({ 
+          message: 'Elder added successfully', 
+      });
+
+  } catch (error) {
+      console.error('Server error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
 });
