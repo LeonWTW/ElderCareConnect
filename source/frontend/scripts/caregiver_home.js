@@ -19,6 +19,10 @@ const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
 const elderSelect = document.getElementById('elderSelect');
 
+//Add Elder form
+const addElderForm = document.getElementById('addElderForm');
+const elderInput = document.getElementById('elderInput');
+
 // Display username in dashboard
 const username = localStorage.getItem('username');
 if (username) {
@@ -97,6 +101,41 @@ function renderTasks(taskData) {
     `).join('');
 }
 
+//Add new elder to the API
+addElderForm.addEventListener('submit', async (event)=> {
+    event.preventDefault();
+
+    const newElder = elderInput.value;
+    const userId = localStorage.getItem('userId')
+
+    try {
+        const response = await fetch('http://localhost:3001/api/addElder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                newElder: newElder
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Success:', data);
+        }
+        else{
+            const data = await response.json();
+        }
+
+    }
+
+    catch(error) {
+        console.error('Network error:', error);
+        return;
+    }
+});
+
 // Submit new task to the API
 addTaskForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -136,6 +175,8 @@ addTaskForm.addEventListener('submit', async (event) => {
         alert('Unable to connect to server');
     }
 });
+
+
 
 // Delete a task via the API
 async function deleteTask(taskId) {
