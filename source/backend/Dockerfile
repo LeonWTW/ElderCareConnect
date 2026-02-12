@@ -9,6 +9,6 @@ RUN npm install
 # Copy the rest of the backend
 COPY . .
 
-EXPOSE 3001
+EXPOSE 3002
 
 CMD ["npm", "start"]
