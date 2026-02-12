@@ -44,6 +44,7 @@ User Page (Caregiver):
     JS:
     - Helped me hide and show items upon button click - 1/27
     - Took the username input from the login to display on the dashboard - 1/28
+    - Helped me add in the "ease-out" transition to task boxes once they've been deleted - 2/8
 
 Backend:
     - Everyone needed to work together to make adjustments to the DB, so I need help converting an entry into something else 
