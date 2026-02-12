@@ -18,9 +18,9 @@ services:
   backend:
     build: ./source/backend
     ports:
-      - "3001:3001"
+      - "3002:3002"
     environment:
-      - PORT=3001
+      - PORT=3002
       - PGHOST=db
       - PGPORT=5432
       - PGUSER=eldercare
