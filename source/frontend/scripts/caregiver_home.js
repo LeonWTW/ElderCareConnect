@@ -30,7 +30,7 @@ async function loadElders() {
     if (!caregiverId) return;
 
     try {
-        const response = await fetch(`http://localhost:3001/api/caregivers/${caregiverId}/elders`);
+        const response = await fetch(`http://localhost:3002/api/caregivers/${caregiverId}/elders`);
         if (!response.ok) return;
 
         const elders = await response.json();
@@ -66,7 +66,7 @@ async function loadTasks(elderName) {
     if (!caregiverId) return;
 
     try {
-        const response = await fetch(`http://localhost:3001/api/tasks/${caregiverId}/${encodeURIComponent(elderName)}`);
+        const response = await fetch(`http://localhost:3002/api/tasks/${caregiverId}/${encodeURIComponent(elderName)}`);
         if (!response.ok) return;
 
         const taskData = await response.json();
@@ -110,7 +110,7 @@ addTaskForm.addEventListener('submit', async (event) => {
     if (!taskName) return;
 
     try {
-        const response = await fetch('http://localhost:3001/api/tasks', {
+        const response = await fetch('http://localhost:3002/api/tasks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -139,7 +139,7 @@ async function deleteTask(taskId) {
     const elderName = elderSelect.value;
 
     try {
-        const response = await fetch(`http://localhost:3001/api/tasks/${taskId}`, {
+        const response = await fetch(`http://localhost:3002/api/tasks/${taskId}`, {
             method: 'DELETE'
         });
 
@@ -171,7 +171,7 @@ function renderNotifications(items) {
     if (!items || items.length === 0) {
         notificationList.innerHTML = `<div class="notification-box">
             <h3>No notifications</h3>
-            <p>Check-ins will appear here.</p>
+            <p>Check-ins and completed tasks will appear here.</p>
         </div>`;
         return;
     }
@@ -179,7 +179,7 @@ function renderNotifications(items) {
     notificationList.innerHTML = items.map(item => `
         <div class="notification-box">
             <h3>${item.elder_name}</h3>
-            <p>Just checked in</p>
+            <p>${item.message || 'Just checked in'}</p>
             <span class="time">${new Date(item.created_at).toLocaleString()}</span>
         </div>
     `).join("");
@@ -192,7 +192,7 @@ async function loadNotifications() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3001/api/caregivers/${caregiverId}/notifications`);
+        const response = await fetch(`http://localhost:3002/api/caregivers/${caregiverId}/notifications`);
         if (!response.ok) {
             renderNotifications([]);
             return;
