@@ -12,7 +12,7 @@ const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
 
-// Task elements
+//Task buttons
 const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
 const elderSelect = document.getElementById('elderSelect');
@@ -86,11 +86,10 @@ function renderTasks(taskData) {
     tasksList.innerHTML = taskData.map(task => `
         <div class="task-item ${task.is_complete ? 'completed' : ''}" id="task-${task.id}">
             <div class="task-info">
-                <strong>${task.task_name}</strong>
-                ${task.description ? `<p>${task.description}</p>` : ''}
-                <span class="task-status">${task.is_complete ? 'Completed' : 'Pending'}</span>
+                <strong class="task-title">${task.task_name} <span class="task-status"> - ${task.is_complete ? 'Completed' : 'Pending'}</span></strong>
+                ${task.description ? `<p class="task-desc">${task.description}</p>` : ''}
+                <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
             </div>
-            <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
         </div>
     `).join('');
 }
@@ -144,9 +143,21 @@ async function deleteTask(taskId) {
             method: 'DELETE'
         });
 
-        if (response.ok && elderName) {
-            loadTasks(elderName);
+        if (!response.ok) {
+            return;
         }
+
+        const task = document.getElementById(`task-${taskId}`);
+
+        if (task) {
+            task.classList.add('fade-out');
+
+            // Wait for animation to finish before removing
+            setTimeout(() => {
+                task.remove();
+            }, 300); // match CSS duration
+        }
+
     } catch (error) {
         console.error('Failed to delete task:', error);
     }
@@ -209,6 +220,17 @@ tasksBtn.addEventListener('click', async () => {
     content.classList.add('hidden');
     loadElders();
 });
+//Add task button
+addTaskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const emptyMsg = tasksList.querySelector('.empty-message');
+    if (emptyMsg) {
+        emptyMsg.remove();
+    }
+
+    addTaskForm.reset();
+})
 
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
@@ -220,7 +242,6 @@ monitorBtn.addEventListener('click', async () => {
 
 // Logout button
 logoutBtn.addEventListener('click', async () => {
-    // Temporary until backend resolved
     localStorage.clear();
     window.location.href = "home.html";
 });

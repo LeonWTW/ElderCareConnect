@@ -16,6 +16,12 @@ a {
     text-decoration: none; /* Removes the link underline*/
 }
 
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none; /* Prevents clicking a hidden element */
+}
+
 /* Navbar Elements */
 .navbar {
     display: flex;
@@ -194,7 +200,7 @@ a {
     background-color: rgb(60, 90, 235);
 }
 
-.completed-tasks-list {
+.tasks-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -202,25 +208,49 @@ a {
     overflow-y: auto;
 }
 
-.completed-task-item {
+.task-item {
     background-color: #f9f9f9;
-    border-left: 4px solid rgb(76, 175, 80);
-    padding: 12px;
+    border-left: 8px solid rgb(255, 0, 0);
+    padding: 10px;
     border-radius: 4px;
-    font-size: 20px;
 }
 
-.completed-task-item strong {
-    display: block;
-    margin-bottom: 4px;
-    color: #333;
+.task-info {
+    display: flex;
+    flex-direction: column;
 }
 
-.completed-task-item span {
-    display: block;
-    color: #666;
-    font-size: 12px;
-    margin-top: 4px;
+.task-item.completed {
+    border-left: 8px solid rgb(0, 255, 0);
+}
+
+.task-title {
+  margin: 0;
+  font-size: 20px;
+  border-bottom: 1px solid lightgrey;
+}
+
+.task-desc {
+  margin: 5px 0px 5px 0px;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #626262;
+}
+
+.task-status {
+    font-size: 15px;
+    font-weight: 200;
+    font-style: italic;
+}
+
+.delete-btn {
+    align-items: right;
+    font-size: 14px;
+    padding: 6px 12px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .empty-message {
@@ -353,4 +383,3 @@ a {
     background-color: rgb(223, 223, 223);
     cursor: pointer;
 }
-
