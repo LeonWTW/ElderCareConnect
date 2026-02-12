@@ -1,0 +1,74 @@
+AI Tools Used
+
+Claude
+- Programming guidance
+- Debugging and troubleshooting
+- Code review and concept explanation
+
+Gemini
+- Research and academic reference lookup (deep research)
+- Usability and design best practices
+
+------------------------------------------------------------------------------------------------
+Project Planning & Research Phase
+    Date: Early project stage
+    Tool: Gemini
+    Purpose: Research dementia-friendly interface design
+
+    Used Gemini to look up research and usability studies about designing for elderly users with cognitive decline. Focused on:
+    - Simplified UI for cognitively impaired users
+    - Usability of web/PWA for elderly
+    - Caregiver dashboard design ideas
+
+    These helped us decide early design choices like:
+    - Large fonts
+    - High contrast UI
+    - Simple navigation
+------------------------------------------------------------------------------------------------
+Database Design
+    Date: 1/28/2026
+    Tool: Claude
+    Purpose: Learn and build PostgreSQL database (first time using relational DB)
+I asked about:
+    1. Basic PostgreSQL concepts (tables, rows, primary keys, foreign keys)
+    2. How to design relationships between users, elders, and caregivers
+    3. Writing basic SQL queries (CREATE TABLE, INSERT, SELECT, UPDATE)
+    4. Connecting PostgreSQL to backend
+
+Claude explained concepts and showed examples, but the final schema and implementation were designed and written by myself based on our system needs.
+
+------------------------------------------------------------------------------------------------
+Cognitive game design research (Dementia Prevention)
+    Date: 2/8/2026
+    Tool: Gemini (Deep Research)
+    Purpose: Study existing cognitive training platforms and open-source resources
+
+Used Gemini to understand what already exists and what ideas could be reused.
+I focused on:
+    - Comparing major cognitive training platforms
+    - Their strengths and limitations
+    - Finding open-source cognitive game implementations
+    - Practical design / system ideas
+
+Existing Platforms Observed：
+
+    1. BrainHQ – Strong research support, clinical-style training
+
+    2. CogniFit – Structured tracking and cognitive assessment
+
+    3. Lumosity – Strong gamification, but debated real cognitive impact
+
+    4. Elevate – More educational than clinical
+
+Open-Source References：
+    1. jsPsych – Psychology experiment JS library (Stroop, visual search, etc.)
+
+    2. Dual N-Back (web) – Working memory training logic
+
+    3. MindMender – Example cognitive training web app
+
+    4. Open-Pinball-Recall – Open-source spatial memory game
+
+This helped me understand how real cognitive training systems are built and how we could borrow selected ideas while keeping our system simple and practical.
+------------------------------------------------------------------------------------------------
+

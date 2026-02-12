@@ -12,7 +12,7 @@ async function loadTasks() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3001/api/tasks/${caregiverId}/${encodeURIComponent(elderName)}`);
+        const response = await fetch(`http://localhost:3002/api/tasks/${caregiverId}/${encodeURIComponent(elderName)}`);
         if (!response.ok) {
             taskList.innerHTML = '<p class="empty-message">Failed to load tasks</p>';
             return;
@@ -49,7 +49,7 @@ async function loadTasks() {
 // Toggle task completion status via the API
 async function toggleTask(taskId, isComplete) {
     try {
-        const response = await fetch(`http://localhost:3001/api/tasks/${taskId}`, {
+        const response = await fetch(`http://localhost:3002/api/tasks/${taskId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ isComplete: isComplete })

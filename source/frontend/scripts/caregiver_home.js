@@ -3,11 +3,13 @@ const homeBtn = document.getElementById('homeBtn');
 const tasksBtn = document.getElementById('tasksBtn');
 const monitorBtn = document.getElementById('monitorBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+const addElderBtn = document.getElementById('addElderBtn');
 
 // Content
 const content = document.getElementById('content');
 const tasks = document.getElementById('tasks');
 const notifs = document.getElementById('notifs');
+const addElder = document.getElementById('addElder');
 const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
@@ -16,6 +18,10 @@ const caregiverId = localStorage.getItem('userId') || localStorage.getItem('care
 const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
 const elderSelect = document.getElementById('elderSelect');
+
+//Add Elder form
+const addElderForm = document.getElementById('addElderForm');
+const elderInput = document.getElementById('elderInput');
 
 // Display username in dashboard
 const username = localStorage.getItem('username');
@@ -30,7 +36,7 @@ async function loadElders() {
     if (!caregiverId) return;
 
     try {
-        const response = await fetch(`http://localhost:3001/api/caregivers/${caregiverId}/elders`);
+        const response = await fetch(`http://localhost:3002/api/caregivers/${caregiverId}/elders`);
         if (!response.ok) return;
 
         const elders = await response.json();
@@ -66,7 +72,7 @@ async function loadTasks(elderName) {
     if (!caregiverId) return;
 
     try {
-        const response = await fetch(`http://localhost:3001/api/tasks/${caregiverId}/${encodeURIComponent(elderName)}`);
+        const response = await fetch(`http://localhost:3002/api/tasks/${caregiverId}/${encodeURIComponent(elderName)}`);
         if (!response.ok) return;
 
         const taskData = await response.json();
@@ -94,6 +100,41 @@ function renderTasks(taskData) {
     `).join('');
 }
 
+//Add new elder to the API
+addElderForm.addEventListener('submit', async (event)=> {
+    event.preventDefault();
+
+    const newElder = elderInput.value;
+    const userId = localStorage.getItem('userId')
+
+    try {
+        const response = await fetch('http://localhost:3001/api/addElder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                newElder: newElder
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Success:', data);
+        }
+        else{
+            const data = await response.json();
+        }
+
+    }
+
+    catch(error) {
+        console.error('Network error:', error);
+        return;
+    }
+});
+
 // Submit new task to the API
 addTaskForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -110,7 +151,7 @@ addTaskForm.addEventListener('submit', async (event) => {
     if (!taskName) return;
 
     try {
-        const response = await fetch('http://localhost:3001/api/tasks', {
+        const response = await fetch('http://localhost:3002/api/tasks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -134,12 +175,14 @@ addTaskForm.addEventListener('submit', async (event) => {
     }
 });
 
+
+
 // Delete a task via the API
 async function deleteTask(taskId) {
     const elderName = elderSelect.value;
 
     try {
-        const response = await fetch(`http://localhost:3001/api/tasks/${taskId}`, {
+        const response = await fetch(`http://localhost:3002/api/tasks/${taskId}`, {
             method: 'DELETE'
         });
 
@@ -171,7 +214,7 @@ function renderNotifications(items) {
     if (!items || items.length === 0) {
         notificationList.innerHTML = `<div class="notification-box">
             <h3>No notifications</h3>
-            <p>Check-ins will appear here.</p>
+            <p>Check-ins and completed tasks will appear here.</p>
         </div>`;
         return;
     }
@@ -179,7 +222,7 @@ function renderNotifications(items) {
     notificationList.innerHTML = items.map(item => `
         <div class="notification-box">
             <h3>${item.elder_name}</h3>
-            <p>Just checked in</p>
+            <p>${item.message || 'Just checked in'}</p>
             <span class="time">${new Date(item.created_at).toLocaleString()}</span>
         </div>
     `).join("");
@@ -192,7 +235,7 @@ async function loadNotifications() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3001/api/caregivers/${caregiverId}/notifications`);
+        const response = await fetch(`http://localhost:3002/api/caregivers/${caregiverId}/notifications`);
         if (!response.ok) {
             renderNotifications([]);
             return;
@@ -210,14 +253,24 @@ async function loadNotifications() {
 homeBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
     notifs.classList.add('hidden');
+    addElder.classList.add('hidden');
     content.classList.remove('hidden');
+});
+
+//Add Elder
+addElderBtn.addEventListener('click', async () => {
+    tasks.classList.add('hidden');
+    notifs.classList.add('hidden');
+    content.classList.add('hidden');
+    addElder.classList.remove('hidden');
 });
 
 // Tasks button - load elders when switching to task view
 tasksBtn.addEventListener('click', async () => {
-    tasks.classList.remove('hidden');
     notifs.classList.add('hidden');
     content.classList.add('hidden');
+    addElder.classList.add('hidden');
+    tasks.classList.remove('hidden');
     loadElders();
 });
 //Add task button
@@ -235,8 +288,9 @@ addTaskForm.addEventListener('submit', (event) => {
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
-    notifs.classList.remove('hidden');
+    addElder.classList.add('hidden');
     content.classList.add('hidden');
+    notifs.classList.remove('hidden');
     loadNotifications();
 });
 
