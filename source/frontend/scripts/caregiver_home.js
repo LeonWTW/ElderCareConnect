@@ -3,11 +3,13 @@ const homeBtn = document.getElementById('homeBtn');
 const tasksBtn = document.getElementById('tasksBtn');
 const monitorBtn = document.getElementById('monitorBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+const addElderBtn = document.getElementById('addElderBtn');
 
 // Content
 const content = document.getElementById('content');
 const tasks = document.getElementById('tasks');
 const notifs = document.getElementById('notifs');
+const addElder = document.getElementById('addElder');
 const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
@@ -16,6 +18,10 @@ const caregiverId = localStorage.getItem('userId') || localStorage.getItem('care
 const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
 const elderSelect = document.getElementById('elderSelect');
+
+//Add Elder form
+const addElderForm = document.getElementById('addElderForm');
+const elderInput = document.getElementById('elderInput');
 
 // Display username in dashboard
 const username = localStorage.getItem('username');
@@ -86,14 +92,48 @@ function renderTasks(taskData) {
     tasksList.innerHTML = taskData.map(task => `
         <div class="task-item ${task.is_complete ? 'completed' : ''}" id="task-${task.id}">
             <div class="task-info">
-                <strong>${task.task_name}</strong>
-                ${task.description ? `<p>${task.description}</p>` : ''}
-                <span class="task-status">${task.is_complete ? 'Completed' : 'Pending'}</span>
+                <strong class="task-title">${task.task_name} <span class="task-status"> - ${task.is_complete ? 'Completed' : 'Pending'}</span></strong>
+                ${task.description ? `<p class="task-desc">${task.description}</p>` : ''}
+                <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
             </div>
-            <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
         </div>
     `).join('');
 }
+
+//Add new elder to the API
+addElderForm.addEventListener('submit', async (event)=> {
+    event.preventDefault();
+
+    const newElder = elderInput.value;
+    const userId = localStorage.getItem('userId')
+
+    try {
+        const response = await fetch('http://localhost:3001/api/addElder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                newElder: newElder
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Success:', data);
+        }
+        else{
+            const data = await response.json();
+        }
+
+    }
+
+    catch(error) {
+        console.error('Network error:', error);
+        return;
+    }
+});
 
 // Submit new task to the API
 addTaskForm.addEventListener('submit', async (event) => {
@@ -135,6 +175,8 @@ addTaskForm.addEventListener('submit', async (event) => {
     }
 });
 
+
+
 // Delete a task via the API
 async function deleteTask(taskId) {
     const elderName = elderSelect.value;
@@ -144,9 +186,21 @@ async function deleteTask(taskId) {
             method: 'DELETE'
         });
 
-        if (response.ok && elderName) {
-            loadTasks(elderName);
+        if (!response.ok) {
+            return;
         }
+
+        const task = document.getElementById(`task-${taskId}`);
+
+        if (task) {
+            task.classList.add('fade-out');
+
+            // Wait for animation to finish before removing
+            setTimeout(() => {
+                task.remove();
+            }, 300); // match CSS duration
+        }
+
     } catch (error) {
         console.error('Failed to delete task:', error);
     }
@@ -199,57 +253,44 @@ async function loadNotifications() {
 homeBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
     notifs.classList.add('hidden');
+    addElder.classList.add('hidden');
     content.classList.remove('hidden');
+});
+
+//Add Elder
+addElderBtn.addEventListener('click', async () => {
+    tasks.classList.add('hidden');
+    notifs.classList.add('hidden');
+    content.classList.add('hidden');
+    addElder.classList.remove('hidden');
 });
 
 // Tasks button - load elders when switching to task view
 tasksBtn.addEventListener('click', async () => {
-    tasks.classList.remove('hidden');
     notifs.classList.add('hidden');
     content.classList.add('hidden');
+    addElder.classList.add('hidden');
+    tasks.classList.remove('hidden');
     loadElders();
 });
 //Add task button
 addTaskForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const taskName = document.getElementById('taskInput').value;
-    const taskDetails = document.getElementById('taskDetails').value;
-
     const emptyMsg = tasksList.querySelector('.empty-message');
     if (emptyMsg) {
         emptyMsg.remove();
     }
 
-    // Create new task with description
-    const newTask = document.createElement('div');
-    const newTitle = document.createElement('p');
-    const newDesc = document.createElement('p');
-
-    newTask.className = 'task-item';
-    newTitle.className = 'task-title';
-    newDesc.className = 'task-details';
-
-    newTitle.textContent = taskName;
-    newDesc.textContent = taskDetails;
-    newTask.appendChild(newTitle);
-    newTask.appendChild(newDesc);
-
-    tasksList.appendChild(newTask);
     addTaskForm.reset();
-
 })
-// Elder Selection
-
-
-
-
 
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
-    notifs.classList.remove('hidden');
+    addElder.classList.add('hidden');
     content.classList.add('hidden');
+    notifs.classList.remove('hidden');
     loadNotifications();
 });
 
