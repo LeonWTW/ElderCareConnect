@@ -3,11 +3,13 @@ const homeBtn = document.getElementById('homeBtn');
 const tasksBtn = document.getElementById('tasksBtn');
 const monitorBtn = document.getElementById('monitorBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+const addElderBtn = document.getElementById('addElderBtn');
 
 // Content
 const content = document.getElementById('content');
 const tasks = document.getElementById('tasks');
 const notifs = document.getElementById('notifs');
+const addElder = document.getElementById('addElder');
 const notificationList = document.querySelector('.notification-list');
 
 const caregiverId = localStorage.getItem('userId') || localStorage.getItem('caregiverId');
@@ -16,6 +18,10 @@ const caregiverId = localStorage.getItem('userId') || localStorage.getItem('care
 const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
 const elderSelect = document.getElementById('elderSelect');
+
+//Add Elder form
+const addElderForm = document.getElementById('addElderForm');
+const elderInput = document.getElementById('elderInput');
 
 // Display username in dashboard
 const username = localStorage.getItem('username');
@@ -94,6 +100,41 @@ function renderTasks(taskData) {
     `).join('');
 }
 
+//Add new elder to the API
+addElderForm.addEventListener('submit', async (event)=> {
+    event.preventDefault();
+
+    const newElder = elderInput.value;
+    const userId = localStorage.getItem('userId')
+
+    try {
+        const response = await fetch('http://localhost:3001/api/addElder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                newElder: newElder
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Success:', data);
+        }
+        else{
+            const data = await response.json();
+        }
+
+    }
+
+    catch(error) {
+        console.error('Network error:', error);
+        return;
+    }
+});
+
 // Submit new task to the API
 addTaskForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -133,6 +174,8 @@ addTaskForm.addEventListener('submit', async (event) => {
         alert('Unable to connect to server');
     }
 });
+
+
 
 // Delete a task via the API
 async function deleteTask(taskId) {
@@ -210,14 +253,24 @@ async function loadNotifications() {
 homeBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
     notifs.classList.add('hidden');
+    addElder.classList.add('hidden');
     content.classList.remove('hidden');
+});
+
+//Add Elder
+addElderBtn.addEventListener('click', async () => {
+    tasks.classList.add('hidden');
+    notifs.classList.add('hidden');
+    content.classList.add('hidden');
+    addElder.classList.remove('hidden');
 });
 
 // Tasks button - load elders when switching to task view
 tasksBtn.addEventListener('click', async () => {
-    tasks.classList.remove('hidden');
     notifs.classList.add('hidden');
     content.classList.add('hidden');
+    addElder.classList.add('hidden');
+    tasks.classList.remove('hidden');
     loadElders();
 });
 //Add task button
@@ -235,8 +288,9 @@ addTaskForm.addEventListener('submit', (event) => {
 // Notifications button
 monitorBtn.addEventListener('click', async () => {
     tasks.classList.add('hidden');
-    notifs.classList.remove('hidden');
+    addElder.classList.add('hidden');
     content.classList.add('hidden');
+    notifs.classList.remove('hidden');
     loadNotifications();
 });
 
