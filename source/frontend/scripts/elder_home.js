@@ -43,7 +43,7 @@ checkinBtn.addEventListener('click', async () => {
     } 
 
     try {
-        const response = await fetch('http://localhost:3001/api/checkins', {
+        const response = await fetch('http://localhost:3002/api/checkins', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
