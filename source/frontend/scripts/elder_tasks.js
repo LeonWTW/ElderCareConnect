@@ -28,8 +28,8 @@ async function loadTasks() {
         taskList.innerHTML = tasks.map(task => `
             <div class="task-item ${task.is_complete ? 'completed' : ''}" id="task-${task.id}">
                 <div class="task-info">
-                    <strong>${task.task_name}</strong>
-                    ${task.description ? `<p>${task.description}</p>` : ''}
+                    <strong class="task-title">${task.task_name}</strong>
+                    ${task.description ? `<p class="task-desc">${task.description}</p>` : ''}
                 </div>
                 <button
                     class="complete-btn ${task.is_complete ? 'done' : ''}"
