@@ -104,11 +104,13 @@ function renderTasks(taskData) {
 addElderForm.addEventListener('submit', async (event)=> {
     event.preventDefault();
 
-    const newElder = elderInput.value;
+    const newElder = elderInput.value.trim();
     const userId = localStorage.getItem('userId')
 
+    if (!newElder) return;
+
     try {
-        const response = await fetch('http://localhost:3001/api/addElder', {
+        const response = await fetch('http://localhost:3002/api/addElder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -122,15 +124,20 @@ addElderForm.addEventListener('submit', async (event)=> {
         if (response.ok) {
             const data = await response.json();
             console.log('Success:', data);
+            elderInput.value = '';
+            await loadElders();
+            alert('Elder added successfully');
         }
         else{
             const data = await response.json();
+            alert(data.error || 'Failed to add elder');
         }
 
     }
 
     catch(error) {
         console.error('Network error:', error);
+        alert('Unable to connect to server');
         return;
     }
 });
