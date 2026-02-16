@@ -30,6 +30,8 @@ User Page (Elder):
     JS:
     - Fade out check-in notification after a given time - 1/31
     - Only allow user to hit check in button once after a given amount of time
+    - Resizing the task fonts (helped me understand why my CSS wasn't being applied, didn't realize that the classname of
+    the title and description elements weren't being applied correctly)- 2/15
 
 User Page (Caregiver):
 

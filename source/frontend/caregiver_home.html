@@ -59,13 +59,19 @@
             </div>
         </div>
         
-        <div id="addElder" class="elder hidden">
+        <div id="addElder" class="addElder hidden">
+            <h2>Elder Management</h2>
             <div class="add-elder-box">
-                <h2>Add New Elder</h2>
                 <form id="addElderForm" class="elder-form">
                     <input type="text" id="elderInput" placeholder="Enter new elder name" required>
                     <button type="submit" class="submit-btn">Add Elder</button>
                 </form>
+            </div> 
+            <div class="elderSelect2">
+                <select id="elderSelect2" required>
+                    <option value="">Select Elder to Delete</option>
+                </select>
+                <button type="delete" class="submit-btn">Remove Elder</button>
             </div>
         </div>
 
@@ -77,7 +83,7 @@
             <button class="footer-button" id="homeBtn"><i class="fas fa-list-check"></i> Home</button>
             <button class="footer-button" id="tasksBtn"><i class="fas fa-list-check"></i> Manage Tasks</button>
             <button class="footer-button" id="monitorBtn"><i class="fa-solid fa-computer"></i> Notifications</button>
-            <button class="footer-button" id="addElderBtn"><i class="fa fa-user-circle" aria-hidden="true"></i> Add Elder</button>
+            <button class="footer-button" id="addElderBtn"><i class="fa fa-user-circle" aria-hidden="true"></i> Elder Options</button>
         </nav>
     </footer>
 
