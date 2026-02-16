@@ -1,4 +1,4 @@
-# CS410 - ElderCare Connect
+# CS410 - ElderCare Connect 👵🏻
 
 ElderCare Connect is a web app for two user types:
 - Caregivers who assign tasks and monitor elder activity.
