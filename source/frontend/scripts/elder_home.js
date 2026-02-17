@@ -83,19 +83,8 @@ function hideNotification() {
 
 // Games
 gamesBtn.addEventListener('click', async () => {
-    games.classList.remove('fade-out');
-    games.classList.add('fade-in');
-    games.classList.remove('hidden');
-    setTimeout(hideNotification2, 4000);
-    success.classList.add('hidden');
+    window.location.href = "elder_games.html";
 });
-
-function hideNotification2() {
-    const notification = document.getElementById('games');
-    if (notification) {
-        notification.classList.add('fade-out');
-    }
-}
 
 // Logout
 logoutBtn.addEventListener('click', async () => {
