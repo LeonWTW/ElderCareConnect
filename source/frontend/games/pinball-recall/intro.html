@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinball Recall - How to Play</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+            font-size: 18px;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: black;
+            margin: 0;
+            background-color: rgb(233, 237, 253);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title {
+            font-size: 64px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 24px;
+            color: grey;
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        /* Instructions */
+        .instructions {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid lightgrey;
+            margin-bottom: 32px;
+        }
+        .instructions h3 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .step-number {
+            background-color: rgb(250, 206, 59);
+            color: black;
+            font-size: 24px;
+            font-weight: 700;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .step-text {
+            font-size: 22px;
+            line-height: 1.5;
+            padding-top: 6px;
+        }
+
+        /* Difficulty selector */
+        .difficulty-section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid lightgrey;
+            margin-bottom: 32px;
+        }
+        .difficulty-section h3 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .difficulty-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .difficulty-option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border: 2px solid lightgrey;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 22px;
+        }
+        .difficulty-option:hover {
+            border-color: rgb(250, 206, 59);
+            background-color: #fffbe6;
+        }
+        .difficulty-option.selected {
+            border-color: rgb(250, 206, 59);
+            background-color: rgb(250, 206, 59);
+        }
+        .difficulty-option input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: #333;
+            flex-shrink: 0;
+        }
+        .difficulty-label {
+            font-weight: 600;
+        }
+        .difficulty-desc {
+            color: #666;
+            font-size: 18px;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn {
+            font-family: system-ui, sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            padding: 18px 48px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-start {
+            background-color: rgb(250, 206, 59);
+            color: black;
+        }
+        .btn-start:hover {
+            background-color: rgb(240, 190, 30);
+            transform: scale(1.03);
+        }
+        .btn-back {
+            background-color: rgb(229, 229, 229);
+            color: black;
+        }
+        .btn-back:hover {
+            background-color: rgb(210, 210, 210);
+        }
+
+        @media (max-width: 600px) {
+            .title { font-size: 42px; }
+            .step-text { font-size: 18px; }
+            .difficulty-option { font-size: 18px; }
+            .btn { font-size: 22px; padding: 14px 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">Pinball Recall</h1>
+    <p class="subtitle">A memory training game</p>
+
+    <div class="instructions">
+        <h3>How to Play</h3>
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-text">
+                <strong>Memorize</strong> the positions and directions of the bumpers on the board. They will only be shown briefly!
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-text">
+                The bumpers will disappear. A <strong>ball</strong> will enter from one side of the board.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-text">
+                <strong>Click</strong> on the edge where you think the ball will <strong>exit</strong> the board based on the bumper positions you memorized.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-text">
+                Watch the ball travel and see if you guessed correctly! Each correct guess earns you <strong>points</strong>.
+            </div>
+        </div>
+    </div>
+
+    <div class="difficulty-section">
+        <h3>Choose Difficulty</h3>
+        <div class="difficulty-options">
+            <label class="difficulty-option selected" data-value="4:5">
+                <input type="radio" name="difficulty" value="4:5" checked>
+                <div>
+                    <div class="difficulty-label">Easy (4x4)</div>
+                    <div class="difficulty-desc">Small board, fewer bumpers. Great for beginners.</div>
+                </div>
+            </label>
+            <label class="difficulty-option" data-value="5:6">
+                <input type="radio" name="difficulty" value="5:6">
+                <div>
+                    <div class="difficulty-label">Medium (5x5)</div>
+                    <div class="difficulty-desc">Bigger board with more bumpers to remember.</div>
+                </div>
+            </label>
+            <label class="difficulty-option" data-value="6:9">
+                <input type="radio" name="difficulty" value="6:9">
+                <div>
+                    <div class="difficulty-label">Hard (6x6)</div>
+                    <div class="difficulty-desc">A real challenge for sharp minds!</div>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-back" id="backBtn">Back</button>
+        <button class="btn btn-start" id="startBtn">Start Game</button>
+    </div>
+</div>
+
+<script>
+    // Difficulty selection
+    const options = document.querySelectorAll('.difficulty-option');
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+            options.forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+            option.querySelector('input').checked = true;
+        });
+    });
+
+    // Start game with selected difficulty
+    document.getElementById('startBtn').addEventListener('click', () => {
+        const selected = document.querySelector('input[name="difficulty"]:checked').value;
+        window.location.href = 'index.html#difficulty=' + selected;
+    });
+
+    // Back to games list
+    document.getElementById('backBtn').addEventListener('click', () => {
+        window.location.href = '../../elder_games.html';
+    });
+</script>
+
+</body>
+</html>
