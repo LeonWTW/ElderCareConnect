@@ -39,28 +39,12 @@ a {
     padding: 50px;
 }
 
-/* <div class="task-item ${task.is_complete ? 'completed' : ''}" id="task-${task.id}">
-        <div class="task-info">
-            <strong class="task-title">${task.task_name} <span class="task-status"> - ${task.is_complete ? 'Completed' : 'Pending'}</span></strong>
-            ${task.description ? `<p class="task-desc">${task.description}</p>` : ''}
-            <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
-        </div>
-    </div> */
-
-/* <div class="task-item ${task.is_complete ? 'completed' : ''}" id="task-${task.id}">
-        <div class="task-info">
-            <strong>${task.task_name}</strong>
-            ${task.description ? `<p>${task.description}</p>` : ''}
-        </div>
-        <button
-            class="complete-btn ${task.is_complete ? 'done' : ''}"
-            onclick="toggleTask(${task.id}, ${!task.is_complete})"
-            ${task.is_complete ? 'disabled' : ''}
-        >
-            ${task.is_complete ? 'Completed' : 'Mark Done'}
-        </button>
-    </div> */
-
+.task-list {
+    background-color: rgb(244, 210, 210);
+    padding: 50px;
+    border: 1px solid rgb(155, 155, 155);
+    border-radius: 12px;
+}
 
 .task-item {
     background-color: #f9f9f9;
@@ -68,6 +52,7 @@ a {
     padding: 10px;
     border-radius: 4px;
     width: 400px;
+    margin-bottom: 20px;;
 }
 
 .task-info {
