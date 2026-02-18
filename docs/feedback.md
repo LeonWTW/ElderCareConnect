@@ -1,24 +1,30 @@
 ### 1/16/26 Meeting @ 12pm
 ## Week 2
-- Better communication: joining a call to discuss architectural problems in order to move along more efficiently
-- Understanding client-server interactions - deciding on a stack to use as well to avoid further conflicts within frontend/backend development
-- Using design tools such as Figma to avoid redundancies and tediousness of designing and implementing the UI
+- Improve communication by joining calls to resolve architecture issues faster.
+- Align on client/server interactions and stack decisions early.
+- Use design tools (Figma) before implementation to reduce UI churn.
 
 ### 1/21/26 Meeting @ 2pm
 ## Week 3
-- Talk through team and determine whether we want to use JS, TS, React, etc.
-- Setting up routes for frontend/backend
+- Decide whether to use JS/TS/React and lock initial approach.
+- Set up frontend/backend routing boundaries.
 
 ### 1/28/26 Meeting @ 2pm
 ## Week 4
-- Talk about communication issues, the backend team must communicate to update a working report.
-- was given guidance as to focus on a feature that would look good to a shareholder of our product
+- Emphasis on backend/frontend reporting cadence.
+- Focus on a feature set that demonstrates shareholder-facing value.
 
 ### 2/04/26 Meeting @ 2pm
 ## Week 5
-- Talked about database changes and how that would impacted the frount end
+- Reviewed DB changes and frontend impact.
 
 ### 2/11/26 Meeting @ 2pm
 ## Week 6
-- Gave an update on our current stack.
-- mentor gave some addvice on where to start testing and what that testing could look like
+- Shared stack status update.
+- Mentor guidance: start practical testing paths now.
+
+### 2/16/26 Follow-up
+## Week 7
+- Resolved backend startup reliability issue in Docker by excluding backend `node_modules` from image build context.
+- Fixed caregiver "Add Elder" frontend API endpoint mismatch (`3001` -> `3002`).
+- Updated repository documentation to reflect real implemented functionality and current limitations.
