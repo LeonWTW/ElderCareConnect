@@ -2,7 +2,7 @@
 ## Week 2
 - Improve communication by joining calls to resolve architecture issues faster.
 - Align on client/server interactions and stack decisions early.
-- Use design tools (Figma) before implementation to reduce UI churn.
+- Use design tools Figma before implementation to reduce UI churn.
 
 ### 1/21/26 Meeting @ 2pm
 ## Week 3
@@ -25,6 +25,4 @@
 
 ### 2/16/26 Follow-up
 ## Week 7
-- Resolved backend startup reliability issue in Docker by excluding backend `node_modules` from image build context.
-- Fixed caregiver "Add Elder" frontend API endpoint mismatch (`3001` -> `3002`).
-- Updated repository documentation to reflect real implemented functionality and current limitations.
+
