@@ -23,6 +23,7 @@
 - Shared stack status update.
 - Mentor guidance: start practical testing paths now.
 
-### 2/16/26 Follow-up
+### 2/18/26 Follow-up
 ## Week 7
-
+- Mentor gave advice of web domains, gave advice to look into cloudflare
+- told about a technical demo that will be due either sunday or next mentor meeting
