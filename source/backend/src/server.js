@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import { fileURLToPath } from "node:url";
 import pool, { initDb } from "./db.js";
 
 const app = express();
@@ -38,6 +39,13 @@ app.post("/api/auth/register", async (req, res) => {
     return res.status(400).json({ error: "Missing fields" });
   }
 
+  const normalizedElders = eldersList.map(name => String(name).trim()).filter(Boolean);
+  const elderNameKeys = normalizedElders.map(name => name.toLowerCase());
+
+  if (new Set(elderNameKeys).size !== elderNameKeys.length) {
+    return res.status(400).json({ error: "Duplicate elder names are not allowed" });
+  }
+
   const passwordHash = await bcrypt.hash(password, 12);
 
   let client;
@@ -54,7 +62,7 @@ app.post("/api/auth/register", async (req, res) => {
 
     await client.query(
       "INSERT INTO care_links (caregiver_id, elder_names) VALUES ($1, $2)",
-      [newId, eldersList]
+      [newId, normalizedElders]
     );
 
     await client.query('COMMIT');
@@ -343,9 +351,12 @@ app.get("/api/caregivers/:caregiverId/notifications", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3002;
-app.listen(PORT, () => {
-  console.log(`Backend listening on port ${PORT}`);
-});
+const isDirectRun = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+if (isDirectRun) {
+  app.listen(PORT, () => {
+    console.log(`Backend listening on port ${PORT}`);
+  });
+}
 
 
 /* CREATE CHECK-IN */
@@ -389,3 +400,5 @@ app.post('/api/addElder', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+export { app };

@@ -53,6 +53,7 @@ submitBtn.addEventListener('click', async () => {
     const elderList = Array.from(document.querySelectorAll('.dynamic-input'))
     .map(input => input.value.trim())
     .filter(val => val !== "");
+    const elderNameKeys = elderList.map(name => name.toLowerCase());
 
 
     
@@ -64,6 +65,11 @@ submitBtn.addEventListener('click', async () => {
 
     if (password !== password2) {
         messageDisplay.innerText = "Passwords do not match";
+        return;
+    }
+
+    if (new Set(elderNameKeys).size !== elderNameKeys.length) {
+        messageDisplay.innerText = "Duplicate elder names are not allowed";
         return;
     }
     
