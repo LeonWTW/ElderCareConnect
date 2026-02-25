@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElderCare Connect - Games</title>
+    <link rel="stylesheet" href="styles/elder_games.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="scripts/elder_games.js" defer></script>
+</head>
+
+<body>
+
+    <main>
+        <div class="games-dashboard">
+            <h2 class="label">Games</h2>
+            <p class="desc">Pick a game to play!</p>
+
+            <div class="score-toggle">
+                <label class="toggle-label" for="showScores">
+                    <i class="fas fa-trophy"></i> Show Best Scores
+                </label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="showScores">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="games-carousel">
+                <button class="arrow arrow-left" id="prevBtn" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <div class="games-grid" id="gamesGrid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <button class="arrow arrow-right" id="nextBtn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <p class="page-indicator" id="pageIndicator">1 / 1</p>
+
+            <button class="home" id="homeBtn">Home</button>
+        </div>
+    </main>
+
+</body>
+</html>

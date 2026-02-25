@@ -359,7 +359,7 @@ if (isDirectRun) {
 }
 
 
-/* CREATE CHECK-IN */
+/* Add Elder */
 app.post('/api/addElder', async (req, res) => {
   const { userId, newElder } = req.body;
 
@@ -398,6 +398,49 @@ app.post('/api/addElder', async (req, res) => {
   } catch (error) {
       console.error('Server error:', error);
       res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// REMOVE ELDER
+app.delete('/api/removeElder', async (req, res) => {
+  const { caregiverId, elderToRemove } = req.body;
+
+  if (!caregiverId || !elderToRemove) {
+    return res.status(400).json({ error: 'Select Elder to Remove' });
+  }
+
+  try {
+    // First check if caregiver exists
+    const result = await pool.query(
+      'SELECT elder_names FROM care_links WHERE caregiver_id = $1',
+      [caregiverId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Caregiver not found.' });
+    }
+
+    const currentElders = result.rows[0].elder_names || [];
+
+    if (!currentElders.includes(elderToRemove)) {
+      return res.status(404).json({ error: 'Elder not found in your list.' });
+    }
+
+    // Remove elder from array
+    await pool.query(
+      `UPDATE care_links
+       SET elder_names = array_remove(elder_names, $1)
+       WHERE caregiver_id = $2`,
+      [elderToRemove, caregiverId]
+    );
+
+    res.status(200).json({
+      message: 'Elder removed successfully'
+    });
+
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

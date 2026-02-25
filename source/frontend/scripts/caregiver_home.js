@@ -6,6 +6,7 @@ const logoutBtn = document.getElementById('logoutBtn');
 const addElderBtn = document.getElementById('addElderBtn');
 
 // Content
+const success = document.getElementById('success');
 const content = document.getElementById('content');
 const tasks = document.getElementById('tasks');
 const notifs = document.getElementById('notifs');
@@ -19,9 +20,11 @@ const addTaskForm = document.getElementById('addTaskForm');
 const tasksList = document.getElementById('TasksList');
 const elderSelect = document.getElementById('elderSelect');
 
-//Add Elder form
+//Add/remove Elder form
 const addElderForm = document.getElementById('addElderForm');
 const elderInput = document.getElementById('elderInput');
+const elderSelect2 = document.getElementById('elderSelect2');
+const removeBtn = document.getElementById('removeBtn');
 
 // Display username in dashboard
 const username = localStorage.getItem('username');
@@ -44,12 +47,20 @@ async function loadElders() {
         // Remove any existing options except the default one
         elderSelect.innerHTML = '<option value="">Select Elder to Manage</option>';
 
+        elderSelect2.innerHTML = '<option value="">Select Elder to Remove</option>';
+
         elders.forEach(name => {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            elderSelect.appendChild(option);
+            const option1 = document.createElement('option');
+            option1.value = name;
+            option1.textContent = name;
+            elderSelect.appendChild(option1);
+
+            const option2 = document.createElement('option');
+            option2.value = name;
+            option2.textContent = name;
+            elderSelect2.appendChild(option2);
         });
+
     } catch (error) {
         console.error('Failed to load elders:', error);
     }
@@ -123,14 +134,15 @@ addElderForm.addEventListener('submit', async (event)=> {
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Success:', data);
+
+            showSuccess("Elder added successfully!");
+
             elderInput.value = '';
             await loadElders();
-            alert('Elder added successfully');
-        }
-        else{
+
+        } else {
             const data = await response.json();
-            alert(data.error || 'Failed to add elder');
+            showError(data.error || "Failed to add elder");
         }
 
     }
@@ -141,6 +153,64 @@ addElderForm.addEventListener('submit', async (event)=> {
         return;
     }
 });
+
+// Helper functions for add elder
+function showSuccess(message) {
+    success.style.cssText = 'color: #097969; background-color: #c8e6c9; border-left: 5px solid #097969;';
+    success.classList.remove('hidden', 'fade-out');
+    success.classList.add('fade-in');
+    success.innerText = message;
+    setTimeout(hideNotification, 4000);
+}
+
+function showError(message) {
+    success.style.cssText = 'color: #c60a00; background-color: #e6c8c8; border-left: 5px solid #790909;';
+    success.classList.remove('hidden', 'fade-out');
+    success.classList.add('fade-in');
+    success.innerText = message;
+    setTimeout(hideNotification, 4000);
+}
+
+removeBtn.addEventListener('click', async () => {
+    const elderName = elderSelect2.value;
+
+    if (!elderName) {
+        showError("Please select an elder to remove.");
+        return;
+    }
+    try {
+        const response = await fetch('http://localhost:3002/api/removeElder', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                caregiverId,
+                elderToRemove: elderName
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showSuccess("Elder removed successfully!");
+            await loadElders();
+        } else {
+            showError(data.error || "Failed to remove elder.");
+        }
+
+    } catch (err) {
+        showError("Unable to connect to server.");
+    }
+});
+
+// Notification hider
+function hideNotification() {
+    const notification = document.getElementById('success');
+    if (notification) {
+        notification.classList.add('fade-out');
+    }
+}
 
 // Submit new task to the API
 addTaskForm.addEventListener('submit', async (event) => {
@@ -270,6 +340,7 @@ addElderBtn.addEventListener('click', async () => {
     notifs.classList.add('hidden');
     content.classList.add('hidden');
     addElder.classList.remove('hidden');
+    loadElders();
 });
 
 // Tasks button - load elders when switching to task view
