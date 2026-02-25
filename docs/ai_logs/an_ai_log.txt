@@ -47,7 +47,12 @@ User Page (Caregiver):
     - Helped me hide and show items upon button click - 1/27
     - Took the username input from the login to display on the dashboard - 1/28
     - Helped me add in the "ease-out" transition to task boxes once they've been deleted - 2/8
+    - Copying the message pop-up from the elder check-in into caregiver "add elder" - 2/24
+    - Implemented the remove elder on the frontend side; also helped me debug removal errors (inconsistent userId/caregiverId
+    naming conventions, etc.)
 
 Backend:
     - Everyone needed to work together to make adjustments to the DB, so I need help converting an entry into something else 
     since originally we stored elders as users, but now we're not so we needed to change all "elderId" instances to "elderName, caregiverId" - 2/5 
+    - Implemented the remove elder API based on the existing add elder API - 2/24
+    

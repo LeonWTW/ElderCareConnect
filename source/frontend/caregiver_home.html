@@ -18,6 +18,8 @@
     </header>
 
     <main>
+        <h2 id="success" class="success hidden">Elder added successfully!</h2>
+        <h2 id="remove" class="remove hidden">Elder has been removed.</h2>
         <div id="content" class="content">
             <h2 id="dashboardLabel" class="label"></h2> <!-- Name on dashboard -->
             <p class="desc">Welcome! Manage tasks and monitor here!</p>
@@ -71,7 +73,7 @@
                 <select id="elderSelect2" required>
                     <option value="">Select Elder to Delete</option>
                 </select>
-                <button type="delete" class="submit-btn">Remove Elder</button>
+                <button type="button" id="removeBtn" class="submit-btn">Remove Elder</button>
             </div>
         </div>
 
