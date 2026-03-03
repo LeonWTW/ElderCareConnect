@@ -60,10 +60,14 @@ app.post("/api/auth/register", async (req, res) => {
 
     const newId = newUser.rows[0].id;
 
-    await client.query(
-      "INSERT INTO care_links (caregiver_id, elder_names) VALUES ($1, $2)",
-      [newId, normalizedElders]
-    );
+    if (normalizedElders.length > 0) {
+      await client.query(
+        `INSERT INTO care_links (caregiver_id, elder_name)
+         SELECT $1, UNNEST($2::TEXT[])
+         ON CONFLICT (caregiver_id, elder_name) DO NOTHING`,
+        [newId, normalizedElders]
+      );
+    }
 
     await client.query('COMMIT');
 
@@ -128,13 +132,12 @@ app.post("/api/auth/elderLogin", async (req, res) => {
   }
 
   try {
-    // We join users and care_links to find the elder within the caregiver's list
-    // The ANY operator is used to check if a value exists inside a Postgres array
+    // We join users and care_links to verify the elder belongs to the caregiver.
     const query = `
       SELECT u.id AS caregiver_id, u.username AS caregiver_name
       FROM users u
       JOIN care_links cl ON u.id = cl.caregiver_id
-      WHERE u.username = $1 AND $2 = ANY(cl.elder_names)
+      WHERE u.username = $1 AND cl.elder_name = $2
     `;
 
     const result = await pool.query(query, [caregiverName, elderName]);
@@ -171,7 +174,7 @@ app.post("/api/checkins", (req, res) => {
   }
 
   pool.query(
-    "SELECT 1 FROM care_links WHERE caregiver_id = $1 AND $2 = ANY(elder_names)",
+    "SELECT 1 FROM care_links WHERE caregiver_id = $1 AND elder_name = $2",
     [caregiverId, elderName]
   )
     .then(result => {
@@ -179,15 +182,11 @@ app.post("/api/checkins", (req, res) => {
         return res.status(404).json({ error: "Elder not linked to caregiver" });
       }
 
-      const inserts = result.rows.map(row => {
-        return pool.query(
-          "INSERT INTO checkins (elder_name, caregiver_id) VALUES ($1, $2)",
-          [elderName, caregiverId]
-        );
-      });
-
-      return Promise.all(inserts).then(() => {
-        res.json({ message: "Check-in recorded", count: inserts.length });
+      return pool.query(
+        "INSERT INTO checkins (elder_name, caregiver_id) VALUES ($1, $2)",
+        [elderName, caregiverId]
+      ).then(() => {
+        res.json({ message: "Check-in recorded", count: 1 });
       });
     })
     .catch(() => {
@@ -201,15 +200,14 @@ app.get("/api/caregivers/:caregiverId/elders", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT elder_names FROM care_links WHERE caregiver_id = $1",
+      `SELECT elder_name
+       FROM care_links
+       WHERE caregiver_id = $1
+       ORDER BY id ASC`,
       [caregiverId]
     );
 
-    if (result.rows.length === 0) {
-      return res.json([]);
-    }
-
-    res.json(result.rows[0].elder_names || []);
+    res.json(result.rows.map(row => row.elder_name));
   } catch {
     res.status(500).json({ error: "Server error" });
   }
@@ -368,27 +366,19 @@ app.post('/api/addElder', async (req, res) => {
   }
 
   try {
-      const result = await pool.query(
-          'SELECT elder_names FROM care_links WHERE caregiver_id = $1',
+      const caregiver = await pool.query(
+          'SELECT 1 FROM users WHERE id = $1',
           [userId]
       );
 
-      if (result.rows.length === 0) {
+      if (caregiver.rows.length === 0) {
           return res.status(404).json({ error: 'Caregiver not found.' });
       }
 
-      const currentElders = result.rows[0].elder_names || [];
-
-      if (currentElders.includes(newElder)) {
-          return res.status(409).json({ error: 'This elder is already in your list.' });
-      }
-
-      const updateResult = await pool.query(
-          `UPDATE care_links 
-           SET elder_names = array_append(elder_names, $1) 
-           WHERE caregiver_id = $2 
-           RETURNING elder_names`,
-          [newElder, userId]
+      await pool.query(
+          `INSERT INTO care_links (caregiver_id, elder_name)
+           VALUES ($1, $2)`,
+          [userId, newElder]
       );
 
       res.status(200).json({ 
@@ -396,6 +386,9 @@ app.post('/api/addElder', async (req, res) => {
       });
 
   } catch (error) {
+      if (error.code === '23505') {
+          return res.status(409).json({ error: 'This elder is already in your list.' });
+      }
       console.error('Server error:', error);
       res.status(500).json({ error: 'Internal server error' });
   }
@@ -410,29 +403,25 @@ app.delete('/api/removeElder', async (req, res) => {
   }
 
   try {
-    // First check if caregiver exists
-    const result = await pool.query(
-      'SELECT elder_names FROM care_links WHERE caregiver_id = $1',
+    const caregiver = await pool.query(
+      'SELECT 1 FROM users WHERE id = $1',
       [caregiverId]
     );
 
-    if (result.rows.length === 0) {
+    if (caregiver.rows.length === 0) {
       return res.status(404).json({ error: 'Caregiver not found.' });
     }
 
-    const currentElders = result.rows[0].elder_names || [];
+    const removeResult = await pool.query(
+      `DELETE FROM care_links
+       WHERE caregiver_id = $1 AND elder_name = $2
+       RETURNING id`,
+      [caregiverId, elderToRemove]
+    );
 
-    if (!currentElders.includes(elderToRemove)) {
+    if (removeResult.rows.length === 0) {
       return res.status(404).json({ error: 'Elder not found in your list.' });
     }
-
-    // Remove elder from array
-    await pool.query(
-      `UPDATE care_links
-       SET elder_names = array_remove(elder_names, $1)
-       WHERE caregiver_id = $2`,
-      [elderToRemove, caregiverId]
-    );
 
     res.status(200).json({
       message: 'Elder removed successfully'
