@@ -25,11 +25,48 @@ export async function initDb(retries = 10, delay = 3000) {
       `);
 
       await pool.query(`
-        CREATE TABLE IF NOT EXISTS care_links (
-          id SERIAL PRIMARY KEY,
-          caregiver_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-          elder_names TEXT[] DEFAULT '{}'
-        );
+        DO $$
+        BEGIN
+          IF EXISTS (
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_schema = 'public'
+              AND table_name = 'care_links'
+              AND column_name = 'elder_names'
+          ) THEN
+            ALTER TABLE care_links RENAME TO care_links_legacy;
+
+            CREATE TABLE care_links (
+              id SERIAL PRIMARY KEY,
+              caregiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              elder_name TEXT NOT NULL
+            );
+
+            INSERT INTO care_links (caregiver_id, elder_name)
+            SELECT DISTINCT caregiver_id, TRIM(elder_name)
+            FROM care_links_legacy
+            CROSS JOIN UNNEST(COALESCE(elder_names, '{}'::TEXT[])) AS elder_name
+            WHERE TRIM(elder_name) <> '';
+
+            DROP TABLE care_links_legacy;
+          ELSE
+            CREATE TABLE IF NOT EXISTS care_links (
+              id SERIAL PRIMARY KEY,
+              caregiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+              elder_name TEXT NOT NULL
+            );
+          END IF;
+        END $$;
+      `);
+
+      await pool.query(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_care_links_caregiver_elder
+        ON care_links (caregiver_id, elder_name);
+      `);
+
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_care_links_caregiver
+        ON care_links (caregiver_id);
       `);
 
       await pool.query(`
