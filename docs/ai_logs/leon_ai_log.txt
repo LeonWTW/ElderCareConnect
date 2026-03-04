@@ -9,6 +9,9 @@ Gemini
 - Research and academic reference lookup (deep research)
 - Usability and design best practices
 
+OpenAI Codex
+- Backend API debugging and test case suggestions
+
 ------------------------------------------------------------------------------------------------
 Project Planning & Research Phase
     Date: Early project stage
@@ -71,4 +74,48 @@ Open-Source References：
 
 This helped me understand how real cognitive training systems are built and how we could borrow selected ideas while keeping our system simple and practical.
 ------------------------------------------------------------------------------------------------
+Docker & DB Infrastructure
+    Date: 2/14/2026
+    Tool: Claude (claude-sonnet-4-6)
+    Purpose: Understand Docker Compose healthcheck behaviour
 
+After adding the retry logic and healthcheck, the backend was still timing out on startup in some cases. I wasn't sure if the issue was with pg_isready or with how service_healthy works.
+
+I asked Claude about:
+    1. What service_healthy actually waits for vs service_started
+    2. Whether pg_isready is reliable as a healthcheck or if a real query is safer
+    3. What the timeout and retries fields in healthcheck do
+
+Claude explained that pg_isready only checks if the socket is open, not if Postgres is ready to take queries. That helped me understand why timing issues were still happening. I used that to decide what to adjust in the config myself.
+
+Claude helped me understand the concepts — all the actual changes and testing were done by me.
+------------------------------------------------------------------------------------------------
+Task API Debugging
+    Date: 2/21/2026
+    Tool: OpenAI Codex (gpt 5.2)
+    Purpose: Debug a silent failure in the PATCH /api/tasks/:taskId endpoint
+
+The PATCH endpoint was returning 200 OK but the is_complete field wasn't updating in the database in some cases. I suspected a type issue somewhere between the frontend and the SQL query.
+
+I pasted the relevant part of server.js into Codex and asked it to spot any potential issues. Codex pointed out that isComplete from req.body was going straight into the query without explicit type casting, which could cause silent failures with the pg driver.
+
+That gave me a clear direction to investigate. The actual fix — adding an explicit boolean cast before passing the value to pool.query — was written and tested by me.
+
+Codex helped me find where to look. The endpoint logic and all the SQL were my own work.
+------------------------------------------------------------------------------------------------
+Frontend UI
+    Date: 2/27/2026
+    Tool: Gemini (Gemini 3.0 Pro)
+    Purpose: Get UI feedback on the task list for elderly users
+
+The task list was functional but felt too dense visually. I wanted to check if the layout was actually appropriate for elderly users before considering it done.
+
+I asked Gemini about:
+    1. Layout best practices for task lists aimed at elderly users
+    2. Whether italic text is suitable for body content for low-vision users
+    3. How to make the Mark Done button visually clear in both states
+
+Gemini suggested more spacing between items, avoiding italic for descriptions, and stronger contrast for the completed state. I took some of that into account when adjusting the CSS.
+
+Gemini gave me ideas to consider, which suggestions to use and how to apply them was my own call.
+------------------------------------------------------------------------------------------------

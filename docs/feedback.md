@@ -23,6 +23,12 @@
 - Shared stack status update.
 - Mentor guidance: start practical testing paths now.
 
-### 2/16/26 Follow-up
+### 2/18/26 Follow-up
 ## Week 7
+- Mentor gave advice of web domains, gave advice to look into cloudflare
+- told about a technical demo that will be due either sunday or next mentor meeting
 
+### 2/25/26 Follow-up
+## Week 8
+- In the database look into changing the "care-links" to a one to many table
+- document the risk of using the caregiver as password

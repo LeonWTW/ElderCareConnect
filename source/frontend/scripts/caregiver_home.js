@@ -193,7 +193,7 @@ removeBtn.addEventListener('click', async () => {
         const data = await response.json();
 
         if (response.ok) {
-            showSuccess("Elder removed successfully!");
+            showSuccess("Elder has been removed.");
             await loadElders();
         } else {
             showError(data.error || "Failed to remove elder.");

@@ -22,3 +22,9 @@ assissted in troubleshooting after I implemented password hashing with bcrypt
 02/11/2026
 -assissted in sending a notification when a task was complete
 -assissted in troubleshooting after implementation of task completion notification broke api test button
+
+02/17/2026
+- asked about information for unit tests and where good unit tests would be implemented
+
+03/03/2026
+-assissted in changeing the care_links scheme from a elder_names TEXT[] to a care_links(caregiver_id, elder_names) model
