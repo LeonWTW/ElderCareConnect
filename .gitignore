@@ -12,3 +12,6 @@ node_modules/
 # OS / editor
 .DS_Store
 .vscode/
+
+# AI Memory (local only, never commit)
+AI_Memory/

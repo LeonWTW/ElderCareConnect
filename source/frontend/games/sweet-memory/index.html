@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Memory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+    <style>
+        /* ── Back button ── */
+        .back-btn {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 999;
+            background: rgba(0,0,0,0.45);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 17px;
+            font-family: system-ui, sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover { background: rgba(0,0,0,0.65); }
+
+        /* ── Layout ── */
+        html { width: 100%; }
+        body {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 80px 20px 48px;
+            box-sizing: border-box;
+            background: #FF9090;
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: 'Coda', cursive;
+        }
+
+        /* ── Score panel ── */
+        #score-panel {
+            text-align: left;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 10px;
+        }
+        #score-panel .stars {
+            margin: 0 8px 0 0;
+            padding: 0;
+            display: inline-block;
+        }
+        #score-panel .stars li { list-style: none; display: inline-block; }
+        #score-panel .stars li i { font-size: 24px; }
+        #score-panel .moves-label { font-size: 20px; }
+        #score-panel .restart { float: right; cursor: pointer; font-size: 24px; padding-top: 2px; }
+
+        /* ── Difficulty bar ── */
+        .difficulty-bar {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .diff-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: 2px solid rgba(0,0,0,0.25);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.45);
+            font-family: 'Coda', cursive;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1.3;
+        }
+        .diff-btn span { display: block; font-size: 12px; opacity: 0.75; }
+        .diff-btn:hover { background: rgba(255,255,255,0.7); }
+        .diff-btn.active {
+            background: #fff;
+            border-color: #333;
+            font-weight: bold;
+        }
+
+        /* ── Card deck (CSS Grid) ── */
+        .deck {
+            display: grid;
+            grid-template-columns: repeat(4, 110px);
+            gap: 15px;
+            padding: 20px;
+            background: #FFFA62;
+            border-radius: 12px;
+            box-shadow: 14px 14px 0 0 #000;
+            list-style: none;
+            margin: 0;
+        }
+        .deck .card {
+            height: 110px;
+            width: 110px;
+            background: #FFCF7F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transform: rotateY(180deg);
+            transform-style: preserve-3d;
+            transition: transform .3s ease;
+            font-family: FontAwesome;
+        }
+        .deck .card.open    { transform: rotateY(0); background: #89C4FF; cursor: default; }
+        .deck .card.show    { font-size: 44px; }
+        .deck .card.match   { transform: rotateY(0); cursor: default; background: #9BCB3C; font-size: 44px; }
+        .deck .card.notmatch { background: #EE0E51; }
+
+        *::selection { background: transparent; }
+        .swal2-backdrop-show { background-color: rgba(255,255,255,0.8) !important; }
+    </style>
+</head>
+<body>
+
+    <a class="back-btn" href="../../elder_games.html">&#8592; Back</a>
+
+    <div id="score-panel">
+        <ul class="stars">
+            <li><i class="fa fa-star"></i></li>
+            <li><i class="fa fa-star"></i></li>
+            <li><i class="fa fa-star"></i></li>
+        </ul>
+        <span class="moves moves-label">0</span><span class="moves-label"> Moves</span>
+        <div class="restart" id="restartBtn">
+            <i class="fa fa-repeat"></i>
+        </div>
+    </div>
+
+    <div class="difficulty-bar">
+        <button class="diff-btn active" data-difficulty="easy">
+            Easy<span>4 pairs</span>
+        </button>
+        <button class="diff-btn" data-difficulty="medium">
+            Medium<span>8 pairs</span>
+        </button>
+        <button class="diff-btn" data-difficulty="hard">
+            Hard<span>12 pairs</span>
+        </button>
+    </div>
+
+    <ul class="deck" id="deck"></ul>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // 12 unique FA4 icons — Easy uses first 4, Medium first 8, Hard all 12
+        var ALL_SYMBOLS = [
+            'bicycle', 'leaf',  'anchor', 'bolt',
+            'cube',    'bomb',  'diamond', 'paper-plane-o',
+            'car',     'heart', 'music',   'trophy'
+        ];
+
+        var DIFFICULTY = {
+            easy:   { pairs: 4  },
+            medium: { pairs: 8  },
+            hard:   { pairs: 12 }
+        };
+
+        var currentDifficulty = 'easy';
+        var opened = [], match = 0, moves = 0, gameCardsQTY = 0;
+        var delay  = 800;
+
+        var $deck        = $('#deck');
+        var $scorePanel  = $('#score-panel');
+        var $moveNum     = $scorePanel.find('.moves');
+        var $ratingStars = $scorePanel.find('.stars i');   // exactly 3 star icons
+
+        // Shuffle — http://stackoverflow.com/a/2450976
+        function shuffle(arr) {
+            var i = arr.length, j, tmp;
+            while (i) {
+                j = Math.floor(Math.random() * i--);
+                tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+            }
+            return arr;
+        }
+
+        function initGame() {
+            var pairs   = DIFFICULTY[currentDifficulty].pairs;
+            var chosen  = ALL_SYMBOLS.slice(0, pairs);
+            var symbols = shuffle(chosen.concat(chosen.slice()));
+
+            gameCardsQTY = pairs;
+            opened = []; match = 0; moves = 0;
+            $moveNum.html(0);
+            $ratingStars.removeClass('fa-star-o').addClass('fa-star');
+            $deck.empty();
+            for (var i = 0; i < symbols.length; i++) {
+                $deck.append($('<li class="card"><i class="fa fa-' + symbols[i] + '"></i></li>'));
+            }
+        }
+
+        // Stars thresholds scale with number of pairs
+        function setRating() {
+            var n = gameCardsQTY;
+            var rating = 3;
+            if      (moves > n + 2  && moves <= n + 6)  { $ratingStars.eq(2).removeClass('fa-star').addClass('fa-star-o'); rating = 2; }
+            else if (moves > n + 6  && moves <= n + 12) { $ratingStars.eq(1).removeClass('fa-star').addClass('fa-star-o'); rating = 1; }
+            else if (moves > n + 12)                    { $ratingStars.eq(0).removeClass('fa-star').addClass('fa-star-o'); rating = 0; }
+            return rating;
+        }
+
+        function saveBestScore(stars) {
+            var key  = 'game-best-sweet-memory';
+            var prev = parseInt(localStorage.getItem(key)) || 0;
+            if (stars > prev) { localStorage.setItem(key, stars + ' ★'); }
+        }
+
+        function endGame(score) {
+            saveBestScore(score);
+            Swal.fire({
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                title: 'You Won! 🎉',
+                text: moves + ' moves  ·  ' + score + ' ★',
+                icon: 'success',
+                confirmButtonColor: '#9BCB3C',
+                confirmButtonText: 'Play again!'
+            }).then(function(r) { if (r.isConfirmed) initGame(); });
+        }
+
+        // Restart button
+        $('#restartBtn').on('click', function() {
+            Swal.fire({
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                title: 'Restart?',
+                text: 'Your progress will be lost.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#9BCB3C',
+                cancelButtonColor: '#EE0E51',
+                confirmButtonText: 'Yes, Restart!'
+            }).then(function(r) { if (r.isConfirmed) initGame(); });
+        });
+
+        // Difficulty buttons
+        $('.diff-btn').on('click', function() {
+            var chosen = $(this).data('difficulty');
+            if (chosen === currentDifficulty) return;
+            currentDifficulty = chosen;
+            $('.diff-btn').removeClass('active');
+            $(this).addClass('active');
+            initGame();
+        });
+
+        // Card flip
+        $deck.on('click', '.card:not(.match):not(.open)', function() {
+            if ($('.show').length > 1) { return; }
+
+            var $this = $(this), card = this.innerHTML;
+            $this.addClass('open show');
+            opened.push(card);
+
+            if (opened.length > 1) {
+                if (card === opened[0]) {
+                    $deck.find('.open').addClass('match animated infinite rubberBand');
+                    setTimeout(function() {
+                        $deck.find('.match').removeClass('open show animated infinite rubberBand');
+                    }, delay);
+                    match++;
+                } else {
+                    $deck.find('.open').addClass('notmatch animated infinite wobble');
+                    setTimeout(function() {
+                        $deck.find('.open').removeClass('animated infinite wobble');
+                    }, delay / 1.5);
+                    setTimeout(function() {
+                        $deck.find('.open').removeClass('open show notmatch animated infinite wobble');
+                    }, delay);
+                }
+                opened = [];
+                moves++;
+                $moveNum.html(moves);
+                setRating();
+            }
+
+            if (gameCardsQTY === match) {
+                var score = setRating();
+                setTimeout(function() { endGame(score); }, 500);
+            }
+        });
+
+        initGame();
+    </script>
+</body>
+</html>

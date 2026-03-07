@@ -79,6 +79,11 @@ footer {
     gap: 10px;
 }
 
+.elder-pin {
+    display: grid;
+    gap: 10px;
+}
+
 label {
     font-size: 25px;
     font-weight: 400;
@@ -106,6 +111,20 @@ input {
 #submitBtn:hover {
     cursor: pointer;
     background-color: lightgrey;
+}
+
+#forgotPinBtn {
+    font-size: 20px;
+    font-weight: 300;
+    padding: 8px;
+    background-color: white;
+    border: 1px solid grey;
+    border-radius: 10px;
+}
+
+#forgotPinBtn:hover {
+    cursor: pointer;
+    background-color: #f1f1f1;
 }
 
 #message {

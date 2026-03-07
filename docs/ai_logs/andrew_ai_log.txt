@@ -28,3 +28,6 @@ assissted in troubleshooting after I implemented password hashing with bcrypt
 
 03/03/2026
 -assissted in changeing the care_links scheme from a elder_names TEXT[] to a care_links(caregiver_id, elder_names) model
+
+03/06/2026
+- talked through the implementation of adding a security pin for the elder accounts

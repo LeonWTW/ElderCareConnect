@@ -2,45 +2,62 @@ const submitBtn = document.getElementById('submitBtn');
 const addBtn = document.getElementById('addBtn');
 const container = document.getElementById('primary-container')
 const messageDisplay = document.getElementById('message');
+const pinPattern = /^\d{4}$/;
 
 let count = 0
 
 addBtn.addEventListener('click', async () => {
-    if(count != 0){
-        const lastId = `primary-${count}`;
-        const last = document.getElementById(lastId).value;
-        if(last == ""){
-            messageDisplay.innerText = "Please fill empty Primary input before adding another";
+    if (count !== 0) {
+        const lastName = document.getElementById(`primary-${count}`)?.value.trim();
+        const lastPin = document.getElementById(`primary-pin-${count}`)?.value.trim();
+        if (!lastName || !lastPin) {
+            messageDisplay.innerText = "Please finish the last elder entry before adding another";
             return;
         }
     }
     
     count++;
     
-    // Create a unique ID for accessibility
     const uniqueId = `primary-${count}`;
+    const uniquePinId = `primary-pin-${count}`;
 
-    // Create the wrapper
-    const wrapper = document.createElement('div');
-    wrapper.className = 'input-group'; // Better for styling than inline styles
+    const wrapper = document.createElement('fieldset');
+    wrapper.className = 'input-group';
     wrapper.style.marginBottom = "10px";
 
-    // Create the label linked to the input ID
-    const label = document.createElement('label');
-    label.setAttribute('for', uniqueId);
-    label.innerText = `Primary ${count}: `;
+    const legend = document.createElement('legend');
+    legend.innerText = `Elder ${count}`;
     
-    // Create the input
-    const newInput = document.createElement('input');
-    newInput.type = 'text';
-    newInput.id = uniqueId;
-    newInput.name = `primary_${count}`; // Good for form data
-    newInput.placeholder = `Enter primary info #${count}`;
-    newInput.className = 'dynamic-input';
+    const elderLabel = document.createElement('label');
+    elderLabel.setAttribute('for', uniqueId);
+    elderLabel.innerText = 'Elder name';
 
-    // Assemble and inject
-    wrapper.appendChild(label);
-    wrapper.appendChild(newInput);
+    const elderInput = document.createElement('input');
+    elderInput.type = 'text';
+    elderInput.id = uniqueId;
+    elderInput.name = `elder_name_${count}`;
+    elderInput.placeholder = 'Enter elder name';
+    elderInput.className = 'elder-name-input';
+
+    const pinLabel = document.createElement('label');
+    pinLabel.setAttribute('for', uniquePinId);
+    pinLabel.innerText = '4-digit PIN';
+
+    const pinInput = document.createElement('input');
+    pinInput.type = 'password';
+    pinInput.inputMode = 'numeric';
+    pinInput.pattern = '\\d{4}';
+    pinInput.maxLength = 4;
+    pinInput.id = uniquePinId;
+    pinInput.name = `elder_pin_${count}`;
+    pinInput.placeholder = '1234';
+    pinInput.className = 'elder-pin-input';
+
+    wrapper.appendChild(legend);
+    wrapper.appendChild(elderLabel);
+    wrapper.appendChild(elderInput);
+    wrapper.appendChild(pinLabel);
+    wrapper.appendChild(pinInput);
     container.appendChild(wrapper);
 });
 
@@ -50,10 +67,12 @@ submitBtn.addEventListener('click', async () => {
     const password = document.getElementById('password').value;
     const password2 = document.getElementById('password2').value;
     const email = document.getElementById('email').value;
-    const elderList = Array.from(document.querySelectorAll('.dynamic-input'))
-    .map(input => input.value.trim())
-    .filter(val => val !== "");
-    const elderNameKeys = elderList.map(name => name.toLowerCase());
+    const elderEntries = Array.from(document.querySelectorAll('.input-group')).map(group => {
+        const elderName = group.querySelector('.elder-name-input')?.value.trim() || "";
+        const pin = group.querySelector('.elder-pin-input')?.value.trim() || "";
+        return { elderName, pin };
+    }).filter(entry => entry.elderName !== "" || entry.pin !== "");
+    const elderNameKeys = elderEntries.map(entry => entry.elderName.toLowerCase());
 
 
     
@@ -72,6 +91,16 @@ submitBtn.addEventListener('click', async () => {
         messageDisplay.innerText = "Duplicate elder names are not allowed";
         return;
     }
+
+    if (elderEntries.some(entry => entry.elderName === "" || entry.pin === "")) {
+        messageDisplay.innerText = "Each elder entry needs both a name and a PIN";
+        return;
+    }
+
+    if (elderEntries.some(entry => !pinPattern.test(entry.pin))) {
+        messageDisplay.innerText = "Each elder PIN must be exactly 4 digits";
+        return;
+    }
     
     //Check to make sure no duplicate elder names
     //Check email is right format
@@ -86,7 +115,7 @@ submitBtn.addEventListener('click', async () => {
                 username: username,
                 email: email,
                 password: password,
-                eldersList: elderList
+                eldersList: elderEntries
             })
         });
 

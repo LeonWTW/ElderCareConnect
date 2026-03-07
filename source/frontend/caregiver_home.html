@@ -66,6 +66,7 @@
             <div class="add-elder-box">
                 <form id="addElderForm" class="elder-form">
                     <input type="text" id="elderInput" placeholder="Enter new elder name" required>
+                    <input type="password" id="elderPinInput" placeholder="4-digit PIN" inputmode="numeric" maxlength="4" required>
                     <button type="submit" class="submit-btn">Add Elder</button>
                 </form>
             </div> 
@@ -74,6 +75,14 @@
                     <option value="">Select Elder to Delete</option>
                 </select>
                 <button type="button" id="removeBtn" class="submit-btn">Remove Elder</button>
+            </div>
+
+            <div class="elderSelect3">
+                <select id="elderSelect3" required>
+                    <option value="">Select Elder to Reset PIN</option>
+                </select>
+                <input type="password" id="resetPinInput" placeholder="New 4-digit PIN" inputmode="numeric" maxlength="4" required>
+                <button type="button" id="resetPinBtn" class="submit-btn">Reset PIN</button>
             </div>
         </div>
 

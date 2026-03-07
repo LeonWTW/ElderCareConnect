@@ -230,8 +230,11 @@ footer {
     min-width: 300px;
 }
 
-.demo-vid img {
+.demo-vid video {
     width: 90%;
+    border: 2px solid grey;
+    border-radius: 8px;
+    background-color: black;
 }
 
 .demo-desc {
