@@ -10,7 +10,7 @@
  */
 const GAMES = [
     { id: "pinball-recall", name: "Pinball Recall", thumbnail: "images/games/pinball-recall.png", url: "games/pinball-recall/intro.html" },
-    { id: "game-2", name: "Coming Soon", thumbnail: "images/placeholder.png", url: "#" },
+    { id: "sweet-memory",   name: "Sweet Memory",  thumbnail: "images/games/sweet-memory.svg",   url: "games/sweet-memory/index.html" },
     { id: "game-3", name: "Coming Soon", thumbnail: "images/placeholder.png", url: "#" },
     { id: "game-4", name: "Coming Soon", thumbnail: "images/placeholder.png", url: "#" },
 ];

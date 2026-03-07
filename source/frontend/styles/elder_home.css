@@ -121,8 +121,8 @@ a {
     color: green;
 }
 
-.button i.fa-x {
-    color: orange;
+.button i.fa-brain {
+    color: #7b4fa6;
 }
 
 .logout {
@@ -152,7 +152,7 @@ a {
 }
 
 .button:hover#gamesBtn {
-    background-color: rgb(250, 206, 59);
+    background-color: rgb(220, 195, 245);
     cursor: pointer;
     transition: all 0.3s;
 }
