@@ -36,7 +36,7 @@ addBtn.addEventListener('click', async () => {
     elderInput.type = 'text';
     elderInput.id = uniqueId;
     elderInput.name = `elder_name_${count}`;
-    elderInput.placeholder = 'Enter elder name';
+    // elderInput.placeholder = 'Enter elder name';
     elderInput.className = 'elder-name-input';
 
     const pinLabel = document.createElement('label');
@@ -50,7 +50,7 @@ addBtn.addEventListener('click', async () => {
     pinInput.maxLength = 4;
     pinInput.id = uniquePinId;
     pinInput.name = `elder_pin_${count}`;
-    pinInput.placeholder = '1234';
+    // pinInput.placeholder = '1234';
     pinInput.className = 'elder-pin-input';
 
     wrapper.appendChild(legend);
