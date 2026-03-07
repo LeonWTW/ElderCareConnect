@@ -65,6 +65,11 @@ export async function initDb(retries = 10, delay = 3000) {
       `);
 
       await pool.query(`
+        ALTER TABLE care_links
+        ADD COLUMN IF NOT EXISTS elder_pin_hash TEXT
+      `);
+
+      await pool.query(`
         CREATE INDEX IF NOT EXISTS idx_care_links_caregiver
         ON care_links (caregiver_id);
       `);

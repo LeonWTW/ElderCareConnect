@@ -75,7 +75,7 @@ test("elder login returns 401 when elder is not linked to caregiver", async () =
       username: "caregiver-negative",
       email: "caregiver-negative@example.com",
       password: "supersecret",
-      eldersList: ["Pat"]
+      eldersList: [{ elderName: "Pat", pin: "1111" }]
     })
   });
 
@@ -84,7 +84,8 @@ test("elder login returns 401 when elder is not linked to caregiver", async () =
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       elderName: "NotLinked",
-      caregiverName: "caregiver-negative"
+      caregiverName: "caregiver-negative",
+      pin: "1111"
     })
   });
 
@@ -92,6 +93,35 @@ test("elder login returns 401 when elder is not linked to caregiver", async () =
   assert.equal(
     response.body.error,
     "Access denied. Verification failed for caregiver or elder name."
+  );
+});
+
+test("elder login returns 401 for wrong pin", async () => {
+  await jsonRequest("/api/auth/register", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      username: "caregiver-negative-pin",
+      email: "caregiver-negative-pin@example.com",
+      password: "supersecret",
+      eldersList: [{ elderName: "Pat", pin: "1111" }]
+    })
+  });
+
+  const response = await jsonRequest("/api/auth/elderLogin", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      elderName: "Pat",
+      caregiverName: "caregiver-negative-pin",
+      pin: "9999"
+    })
+  });
+
+  assert.equal(response.status, 401);
+  assert.equal(
+    response.body.error,
+    "Access denied. Verification failed for caregiver, elder name, or PIN."
   );
 });
 
@@ -135,10 +165,57 @@ test("register returns 400 when elder list contains duplicate names", async () =
       username: "duplicate-elder-user",
       email: "duplicate-elder-user@example.com",
       password: "supersecret",
-      eldersList: ["Alex", " alex "]
+      eldersList: [
+        { elderName: "Alex", pin: "1234" },
+        { elderName: " alex ", pin: "5678" }
+      ]
     })
   });
 
   assert.equal(response.status, 400);
   assert.equal(response.body.error, "Duplicate elder names are not allowed");
+});
+
+test("register returns 400 when elder pin is missing or invalid", async () => {
+  const response = await jsonRequest("/api/auth/register", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      username: "bad-pin-user",
+      email: "bad-pin-user@example.com",
+      password: "supersecret",
+      eldersList: [{ elderName: "Alex", pin: "12" }]
+    })
+  });
+
+  assert.equal(response.status, 400);
+  assert.equal(response.body.error, "Each elder must have a 4-digit PIN");
+});
+
+test("reset pin returns 404 when elder is not linked to caregiver", async () => {
+  const register = await jsonRequest("/api/auth/register", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      username: "caregiver-reset-negative",
+      email: "caregiver-reset-negative@example.com",
+      password: "supersecret",
+      eldersList: [{ elderName: "Taylor", pin: "1234" }]
+    })
+  });
+
+  const caregiverId = register.body.user.id;
+
+  const response = await jsonRequest("/api/elders/resetPin", {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      caregiverId,
+      elderName: "NotLinked",
+      newPin: "5678"
+    })
+  });
+
+  assert.equal(response.status, 404);
+  assert.equal(response.body.error, "Elder not found in your list.");
 });

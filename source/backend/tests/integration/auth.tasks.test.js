@@ -47,7 +47,7 @@ test("caregiver auth flow works: register, login, elder login", async () => {
       username: "caregiver1",
       email: "caregiver1@example.com",
       password: "supersecret",
-      eldersList: ["Alex"]
+      eldersList: [{ elderName: "Alex", pin: "1234" }]
     })
   });
 
@@ -73,7 +73,8 @@ test("caregiver auth flow works: register, login, elder login", async () => {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       elderName: "Alex",
-      caregiverName: "caregiver1"
+      caregiverName: "caregiver1",
+      pin: "1234"
     })
   });
 
@@ -90,7 +91,7 @@ test("task lifecycle works: create, list, complete, delete", async () => {
       username: "caregiver2",
       email: "caregiver2@example.com",
       password: "supersecret",
-      eldersList: ["Sam"]
+      eldersList: [{ elderName: "Sam", pin: "5678" }]
     })
   });
 
@@ -138,4 +139,90 @@ test("task lifecycle works: create, list, complete, delete", async () => {
   const listAfterDelete = await jsonRequest(`/api/tasks/${caregiverId}/Sam`);
   assert.equal(listAfterDelete.status, 200);
   assert.equal(listAfterDelete.body.length, 0);
+});
+
+test("elder forgot pin creates caregiver notification", async () => {
+  const register = await jsonRequest("/api/auth/register", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      username: "caregiver3",
+      email: "caregiver3@example.com",
+      password: "supersecret",
+      eldersList: [{ elderName: "Jordan", pin: "2468" }]
+    })
+  });
+
+  const caregiverId = register.body.user.id;
+
+  const forgotPin = await jsonRequest("/api/auth/elderForgotPin", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      elderName: "Jordan",
+      caregiverName: "caregiver3"
+    })
+  });
+
+  assert.equal(forgotPin.status, 200);
+  assert.equal(forgotPin.body.message, "PIN reset request sent to caregiver.");
+
+  const notifications = await jsonRequest(`/api/caregivers/${caregiverId}/notifications`);
+  assert.equal(notifications.status, 200);
+  assert.equal(notifications.body.length, 1);
+  assert.equal(notifications.body[0].event_type, "pin_reset_requested");
+});
+
+test("caregiver can reset elder pin and elder must use new pin", async () => {
+  const register = await jsonRequest("/api/auth/register", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      username: "caregiver4",
+      email: "caregiver4@example.com",
+      password: "supersecret",
+      eldersList: [{ elderName: "Morgan", pin: "1357" }]
+    })
+  });
+
+  const caregiverId = register.body.user.id;
+
+  const resetPin = await jsonRequest("/api/elders/resetPin", {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      caregiverId,
+      elderName: "Morgan",
+      newPin: "2468"
+    })
+  });
+
+  assert.equal(resetPin.status, 200);
+  assert.equal(resetPin.body.message, "Elder PIN reset successfully.");
+
+  const oldPinLogin = await jsonRequest("/api/auth/elderLogin", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      elderName: "Morgan",
+      caregiverName: "caregiver4",
+      pin: "1357"
+    })
+  });
+  assert.equal(oldPinLogin.status, 401);
+
+  const newPinLogin = await jsonRequest("/api/auth/elderLogin", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      elderName: "Morgan",
+      caregiverName: "caregiver4",
+      pin: "2468"
+    })
+  });
+  assert.equal(newPinLogin.status, 200);
+
+  const notifications = await jsonRequest(`/api/caregivers/${caregiverId}/notifications`);
+  assert.equal(notifications.status, 200);
+  assert.equal(notifications.body[0].event_type, "pin_reset_completed");
 });
