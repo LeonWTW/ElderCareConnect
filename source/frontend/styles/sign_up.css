@@ -49,7 +49,7 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh; 
+    padding-top: 70px;
 }
 
 #login {
@@ -117,6 +117,10 @@ input {
 #addBtn:hover {
     cursor: pointer;
     background-color: lightgrey;
+}
+
+.elder-pin-input {
+    letter-spacing: 3px;
 }
 
 #submitBtn {
