@@ -23,8 +23,13 @@ const elderSelect = document.getElementById('elderSelect');
 //Add/remove Elder form
 const addElderForm = document.getElementById('addElderForm');
 const elderInput = document.getElementById('elderInput');
+const elderPinInput = document.getElementById('elderPinInput');
 const elderSelect2 = document.getElementById('elderSelect2');
+const elderSelect3 = document.getElementById('elderSelect3');
+const resetPinInput = document.getElementById('resetPinInput');
 const removeBtn = document.getElementById('removeBtn');
+const resetPinBtn = document.getElementById('resetPinBtn');
+const pinPattern = /^\d{4}$/;
 
 // Display username in dashboard
 const username = localStorage.getItem('username');
@@ -48,6 +53,7 @@ async function loadElders() {
         elderSelect.innerHTML = '<option value="">Select Elder to Manage</option>';
 
         elderSelect2.innerHTML = '<option value="">Select Elder to Remove</option>';
+        elderSelect3.innerHTML = '<option value="">Select Elder to Reset PIN</option>';
 
         elders.forEach(name => {
             const option1 = document.createElement('option');
@@ -59,6 +65,11 @@ async function loadElders() {
             option2.value = name;
             option2.textContent = name;
             elderSelect2.appendChild(option2);
+
+            const option3 = document.createElement('option');
+            option3.value = name;
+            option3.textContent = name;
+            elderSelect3.appendChild(option3);
         });
 
     } catch (error) {
@@ -116,9 +127,18 @@ addElderForm.addEventListener('submit', async (event)=> {
     event.preventDefault();
 
     const newElder = elderInput.value.trim();
+    const pin = elderPinInput.value.trim();
     const userId = localStorage.getItem('userId')
 
-    if (!newElder) return;
+    if (!newElder || !pin) {
+        showError("Elder name and PIN are required.");
+        return;
+    }
+
+    if (!pinPattern.test(pin)) {
+        showError("PIN must be exactly 4 digits.");
+        return;
+    }
 
     try {
         const response = await fetch('http://localhost:3002/api/addElder', {
@@ -128,7 +148,8 @@ addElderForm.addEventListener('submit', async (event)=> {
             },
             body: JSON.stringify({
                 userId: userId,
-                newElder: newElder
+                newElder: newElder,
+                pin: pin
             })
         });
 
@@ -138,6 +159,7 @@ addElderForm.addEventListener('submit', async (event)=> {
             showSuccess("Elder added successfully!");
 
             elderInput.value = '';
+            elderPinInput.value = '';
             await loadElders();
 
         } else {
@@ -200,6 +222,45 @@ removeBtn.addEventListener('click', async () => {
         }
 
     } catch (err) {
+        showError("Unable to connect to server.");
+    }
+});
+
+resetPinBtn.addEventListener('click', async () => {
+    const elderName = elderSelect3.value;
+    const newPin = resetPinInput.value.trim();
+
+    if (!elderName) {
+        showError("Please select an elder to reset PIN.");
+        return;
+    }
+
+    if (!pinPattern.test(newPin)) {
+        showError("PIN must be exactly 4 digits.");
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3002/api/elders/resetPin', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                caregiverId,
+                elderName,
+                newPin
+            })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            showSuccess("Elder PIN reset successfully.");
+            resetPinInput.value = '';
+        } else {
+            showError(data.error || "Failed to reset PIN.");
+        }
+    } catch (error) {
         showError("Unable to connect to server.");
     }
 });

@@ -34,19 +34,37 @@ app.get("/api/hello", (req, res) => {
 app.post("/api/auth/register", async (req, res) => {
   // TODO: Fix DB entries
   const { username, email, password, eldersList } = req.body;
+  const pinPattern = /^\d{4}$/;
 
   if (!username || !email || !password || !Array.isArray(eldersList)) {
     return res.status(400).json({ error: "Missing fields" });
   }
 
-  const normalizedElders = eldersList.map(name => String(name).trim()).filter(Boolean);
-  const elderNameKeys = normalizedElders.map(name => name.toLowerCase());
+  const normalizedElders = eldersList
+    .map(entry => {
+      if (typeof entry === "string") {
+        return { elderName: String(entry).trim(), pin: "" };
+      }
+      return {
+        elderName: String(entry?.elderName || "").trim(),
+        pin: String(entry?.pin || "").trim()
+      };
+    })
+    .filter(entry => entry.elderName);
+  const elderNameKeys = normalizedElders.map(entry => entry.elderName.toLowerCase());
 
   if (new Set(elderNameKeys).size !== elderNameKeys.length) {
     return res.status(400).json({ error: "Duplicate elder names are not allowed" });
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
+  if (normalizedElders.some(entry => !pinPattern.test(entry.pin))) {
+    return res.status(400).json({ error: "Each elder must have a 4-digit PIN" });
+  }
+  const elderPinHashes = await Promise.all(
+    normalizedElders.map(entry => bcrypt.hash(entry.pin, 12))
+  );
+  const elderNames = normalizedElders.map(entry => entry.elderName);
 
   let client;
   try {
@@ -60,12 +78,14 @@ app.post("/api/auth/register", async (req, res) => {
 
     const newId = newUser.rows[0].id;
 
-    if (normalizedElders.length > 0) {
+    if (elderNames.length > 0) {
       await client.query(
-        `INSERT INTO care_links (caregiver_id, elder_name)
-         SELECT $1, UNNEST($2::TEXT[])
-         ON CONFLICT (caregiver_id, elder_name) DO NOTHING`,
-        [newId, normalizedElders]
+        `INSERT INTO care_links (caregiver_id, elder_name, elder_pin_hash)
+         SELECT $1, t.elder_name, t.elder_pin_hash
+         FROM UNNEST($2::TEXT[], $3::TEXT[]) AS t(elder_name, elder_pin_hash)
+         ON CONFLICT (caregiver_id, elder_name)
+         DO UPDATE SET elder_pin_hash = EXCLUDED.elder_pin_hash`,
+        [newId, elderNames, elderPinHashes]
       );
     }
 
@@ -125,16 +145,16 @@ app.post("/api/auth/login", async (req, res) => {
 /* ELDER LOGIN */
 app.post("/api/auth/elderLogin", async (req, res) => {
 
-  const { elderName, caregiverName } = req.body;
+  const { elderName, caregiverName, pin } = req.body;
 
-  if (!elderName || !caregiverName) {
-    return res.status(400).json({ error: "Missing elder name or caregiver name" });
+  if (!elderName || !caregiverName || !pin) {
+    return res.status(400).json({ error: "Missing elder name, caregiver name, or PIN" });
   }
 
   try {
     // We join users and care_links to verify the elder belongs to the caregiver.
     const query = `
-      SELECT u.id AS caregiver_id, u.username AS caregiver_name
+      SELECT u.id AS caregiver_id, u.username AS caregiver_name, cl.elder_pin_hash
       FROM users u
       JOIN care_links cl ON u.id = cl.caregiver_id
       WHERE u.username = $1 AND cl.elder_name = $2
@@ -149,6 +169,13 @@ app.post("/api/auth/elderLogin", async (req, res) => {
     }
 
     const authData = result.rows[0];
+    const pinMatches = await bcrypt.compare(String(pin), authData.elder_pin_hash || "");
+
+    if (!pinMatches) {
+      return res.status(401).json({
+        error: "Access denied. Verification failed for caregiver, elder name, or PIN."
+      });
+    }
 
     res.json({
       message: "Elder login successful",
@@ -161,6 +188,40 @@ app.post("/api/auth/elderLogin", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
   
+});
+
+/* ELDER FORGOT PIN */
+app.post("/api/auth/elderForgotPin", async (req, res) => {
+  const { elderName, caregiverName } = req.body;
+
+  if (!elderName || !caregiverName) {
+    return res.status(400).json({ error: "Missing elder name or caregiver name" });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT u.id AS caregiver_id
+       FROM users u
+       JOIN care_links cl ON u.id = cl.caregiver_id
+       WHERE u.username = $1 AND cl.elder_name = $2`,
+      [caregiverName, elderName]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No matching elder/caregiver account found." });
+    }
+
+    await pool.query(
+      `INSERT INTO checkins (elder_name, caregiver_id, event_type)
+       VALUES ($1, $2, 'pin_reset_requested')`,
+      [elderName, result.rows[0].caregiver_id]
+    );
+
+    return res.json({ message: "PIN reset request sent to caregiver." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
 });
 
 
@@ -331,6 +392,8 @@ app.get("/api/caregivers/:caregiverId/notifications", (req, res) => {
       SELECT id, elder_name, created_at, event_type, task_name,
       CASE
         WHEN event_type = 'task_completed' THEN CONCAT(elder_name, ' completed task: ', task_name)
+        WHEN event_type = 'pin_reset_requested' THEN CONCAT(elder_name, ' requested PIN help')
+        WHEN event_type = 'pin_reset_completed' THEN CONCAT('PIN reset for ', elder_name)
         ELSE CONCAT(elder_name, ' checked in')
       END AS message
       FROM checkins
@@ -359,13 +422,20 @@ if (isDirectRun) {
 
 /* Add Elder */
 app.post('/api/addElder', async (req, res) => {
-  const { userId, newElder } = req.body;
+  const { userId, newElder, pin } = req.body;
+  const pinPattern = /^\d{4}$/;
 
-  if (!userId || !newElder) {
+  if (!userId || !newElder || !pin) {
       return res.status(400).json({ error: 'Missing required fields.' });
   }
 
+  if (!pinPattern.test(String(pin).trim())) {
+      return res.status(400).json({ error: 'PIN must be 4 digits.' });
+  }
+
   try {
+      const pinHash = await bcrypt.hash(String(pin).trim(), 12);
+
       const caregiver = await pool.query(
           'SELECT 1 FROM users WHERE id = $1',
           [userId]
@@ -376,9 +446,9 @@ app.post('/api/addElder', async (req, res) => {
       }
 
       await pool.query(
-          `INSERT INTO care_links (caregiver_id, elder_name)
-           VALUES ($1, $2)`,
-          [userId, newElder]
+          `INSERT INTO care_links (caregiver_id, elder_name, elder_pin_hash)
+           VALUES ($1, $2, $3)`,
+          [userId, newElder, pinHash]
       );
 
       res.status(200).json({ 
@@ -430,6 +500,53 @@ app.delete('/api/removeElder', async (req, res) => {
   } catch (error) {
     console.error('Server error:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/* RESET ELDER PIN */
+app.patch('/api/elders/resetPin', async (req, res) => {
+  const { caregiverId, elderName, newPin } = req.body;
+  const pinPattern = /^\d{4}$/;
+
+  if (!caregiverId || !elderName || !newPin) {
+    return res.status(400).json({ error: 'Missing required fields.' });
+  }
+
+  if (!pinPattern.test(String(newPin).trim())) {
+    return res.status(400).json({ error: 'PIN must be 4 digits.' });
+  }
+
+  try {
+    const existingLink = await pool.query(
+      `SELECT 1
+       FROM care_links
+       WHERE caregiver_id = $1 AND elder_name = $2`,
+      [caregiverId, elderName]
+    );
+
+    if (existingLink.rows.length === 0) {
+      return res.status(404).json({ error: 'Elder not found in your list.' });
+    }
+
+    const pinHash = await bcrypt.hash(String(newPin).trim(), 12);
+
+    await pool.query(
+      `UPDATE care_links
+       SET elder_pin_hash = $1
+       WHERE caregiver_id = $2 AND elder_name = $3`,
+      [pinHash, caregiverId, elderName]
+    );
+
+    await pool.query(
+      `INSERT INTO checkins (elder_name, caregiver_id, event_type)
+       VALUES ($1, $2, 'pin_reset_completed')`,
+      [elderName, caregiverId]
+    );
+
+    return res.status(200).json({ message: 'Elder PIN reset successfully.' });
+  } catch (error) {
+    console.error('Server error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
