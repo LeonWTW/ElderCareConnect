@@ -6,7 +6,7 @@ import pool, { initDb } from "./db.js";
 
 const app = express();
 
-// Allow your frontend to call the API
+// Allows frontend to call the API
 app.use(cors({
   origin: true,        // for dev; you can lock this down later
   credentials: false
@@ -22,7 +22,7 @@ app.get("/health", (req, res) => {
   res.json({ ok: true, service: "backend", time: new Date().toISOString() });
 });
 
-// Example endpoint your frontend can fetch
+// test endpoint for the frontend to fetch
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from Node backend!" });
 });
@@ -32,7 +32,6 @@ app.get("/api/hello", (req, res) => {
 
 /* REGISTER */
 app.post("/api/auth/register", async (req, res) => {
-  // TODO: Fix DB entries
   const { username, email, password, eldersList } = req.body;
   const pinPattern = /^\d{4}$/;
 

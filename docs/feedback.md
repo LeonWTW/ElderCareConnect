@@ -32,3 +32,7 @@
 ## Week 8
 - In the database look into changing the "care-links" to a one to many table
 - document the risk of using the caregiver as password
+
+### 3/4/26 Follow-up
+## Week 9
+- told to find a better solution to the elder password problem
