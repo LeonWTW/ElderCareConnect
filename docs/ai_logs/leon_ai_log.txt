@@ -118,4 +118,76 @@ I asked Gemini about:
 Gemini suggested more spacing between items, avoiding italic for descriptions, and stronger contrast for the completed state. I took some of that into account when adjusting the CSS.
 
 Gemini gave me ideas to consider, which suggestions to use and how to apply them was my own call.
+
 ------------------------------------------------------------------------------------------------
+Game Integration & Navigation Design
+    Date: 3/2/2026
+    Tool: Claude / Codex
+    Purpose: Integrate a browser-based cognitive game into our elder-facing frontend
+
+I was working on adding a games section for elderly users and needed to figure out the cleanest way to integrate an external/open-source browser game into our existing frontend structure.
+
+I asked AI about:
+    1. How to organize static game files inside our frontend folder
+    2. How to handle navigation between the elder dashboard, games menu, and the game intro page
+    3. Whether a registry-based structure for multiple games would scale better than hardcoding each button
+    4. How to keep the flow simple enough for elderly users
+
+The AI suggestions helped me think through the folder structure and page flow, especially the idea of using a simple games registry and separate landing/navigation logic.
+
+I implemented the actual dashboard, file organization, and navigation myself, then manually tested:
+    - opening the games page from the elder dashboard
+    - launching Pinball Recall from the game card
+    - returning back to the dashboard
+    - making sure all asset paths loaded correctly
+
+AI helped with implementation planning, but the integration and verification were done by me.
+------------------------------------------------------------------------------------------------
+Game Dashboard Frontend Structure
+    Date: 3/5/2026
+    Tool: Codex
+    Purpose: Get feedback on structuring the Brain Games dashboard frontend logic
+
+When I built the elder games dashboard, I wanted a cleaner way to render multiple games, paginate them, and optionally show best scores without making the frontend too repetitive.
+
+I asked Codex about:
+    1. How to structure a lightweight registry for multiple game cards
+    2. How to keep the render logic reusable as more games are added
+    3. How localStorage-based best score tracking could be shown without overcomplicating the UI
+
+Codex suggested patterns for registry-based rendering and state-driven re-rendering. That gave me a clearer structure for the page.
+
+I wrote the actual JavaScript and tested it myself by:
+    - adding game entries to the registry
+    - checking page navigation and card clicks
+    - toggling score visibility
+    - verifying best score values were read correctly from localStorage
+
+The final code and all testing were my own work.
+------------------------------------------------------------------------------------------------
+Sweet Memory Game Implementation
+    Date: 3/8/2026
+    Tool: Claude / Codex
+    Purpose: Sanity-check game logic and UI decisions for a simple memory training game
+
+While adding the Sweet Memory game, I wanted to make sure the difficulty levels, card matching flow, restart logic, and score feedback all made sense before considering it finished.
+
+I asked AI about:
+    1. How to structure simple memory-card game state clearly
+    2. Ways to scale difficulty without changing the basic interaction model
+    3. Whether the reward/score feedback was simple enough for elderly users
+    4. Whether "Brain Games" was clearer wording than just "Games" on the elder dashboard
+
+AI helped me think through the game-state structure and the UI wording, but I implemented the actual game logic and interface changes myself.
+
+I verified the results through manual testing:
+    - Easy / Medium / Hard mode setup
+    - card shuffle and match detection
+    - restart flow
+    - win condition
+    - best score persistence in localStorage
+    - updated elder dashboard wording and icon clarity
+
+AI was used as a design/debugging aid. The implementation and verification were done by me.
+------------------------------------------------------------------------------------------------
+
